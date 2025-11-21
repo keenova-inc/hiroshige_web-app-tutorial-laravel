@@ -10,6 +10,7 @@ DB_SERVER  := laravel-db-server
 # Laravelプロジェクトの新規作成
 setup:
 	@if [ ! -d $(SRC_DIR)/vendor ]; then \
+		makedir $(SRC_DIR); \
 		make up; \
 		docker compose exec $(APP_SERVER) composer create-project --prefer-dist "laravel/laravel=12.*" .; \
 		docker compose cp ./docker-config/php/.env.tutorial $(APP_SERVER):/var/www/html/.env; \
