@@ -13,7 +13,7 @@ setup:
 		mkdir $(SRC_DIR); \
 		make up; \
 		docker compose exec $(APP_SERVER) composer create-project --prefer-dist "laravel/laravel=12.*" .; \
-		docker compose cp ./docker-config/php/.env.tutorial $(APP_SERVER):/var/www/html/.env; \
+		docker compose cp ./docker-config/php/.env.laravel $(APP_SERVER):/var/www/html/.env; \
 		docker compose exec $(APP_SERVER) php artisan key:generate; \
 		docker compose exec $(APP_SERVER) chmod -R 777 storage bootstrap/cache; \
 		echo "\n============================="; \
