@@ -43,9 +43,9 @@ restart:
 	@make up
 
 # コンテナログイン
-app:
+login-app:
 	docker compose exec $(APP_SERVER) sh
-web:
+login-web:
 	docker compose exec $(WEB_SERVER) sh
-db:
+login-db:
 	docker compose exec $(DB_SERVER) bash
