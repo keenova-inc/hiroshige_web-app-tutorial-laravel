@@ -49,6 +49,3 @@ web:
 	docker compose exec $(WEB_SERVER) sh
 db:
 	docker compose exec $(DB_SERVER) bash
-
-hello:
-	@echo "hi"
