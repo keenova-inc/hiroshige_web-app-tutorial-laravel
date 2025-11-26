@@ -15,6 +15,7 @@ setup:
 		docker compose exec $(APP_SERVER) composer create-project --prefer-dist "laravel/laravel=12.*" .; \
 		docker compose cp ./docker-config/php/.env.laravel $(APP_SERVER):/var/www/html/.env; \
 		docker compose exec $(APP_SERVER) php artisan key:generate; \
+		docker compose exec $(APP_SERVER) php artisan migrate; \
 		docker compose exec $(APP_SERVER) chmod -R 777 storage bootstrap/cache; \
 		echo "\n============================="; \
 		echo "🚀 URL:http://localhost:8080"; \
