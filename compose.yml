@@ -1,6 +1,6 @@
 services:
 
-  # Appサーバ（PHP+Laravel）
+  # Appサーバ
   laravel-app-server:
     build: ./docker-config/php
     container_name: laravel-app-server
@@ -9,3 +9,17 @@ services:
     volumes:
       - ./src:/var/www/html
       - ./docker-config/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+    command: >
+      sh -c "php artisan serve --host 0.0.0.0 --port 8000"
+
+  # Appサーバ（参照コード確認用）
+  ref-app-server:
+    build: ./docker-config/php
+    container_name: ref-app-server
+    ports:
+      - '8001:8000'
+    volumes:
+      - ./src_ref:/var/www/html
+      - ./docker-config/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+    command: >
+      sh -c "php artisan serve --host 0.0.0.0 --port 8000"

@@ -4,7 +4,7 @@ FROM php:8.2-fpm-alpine
 # composerコマンドのインストール
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN apk add --no-cache \
+RUN apk update && apk add --no-cache \
     $PHPIZE_DEPS \
     libzip-dev \
     sqlite-dev \
