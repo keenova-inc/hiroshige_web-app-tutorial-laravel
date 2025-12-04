@@ -11,8 +11,9 @@ RUN apk add --no-cache \
     mysql-client \
     curl \
     git \
-    unzip
+    unzip \
+    icu-dev
 
-RUN docker-php-ext-install pdo pdo_mysql opcache zip
+RUN docker-php-ext-install pdo pdo_mysql opcache zip intl
 
 WORKDIR /var/www/html
