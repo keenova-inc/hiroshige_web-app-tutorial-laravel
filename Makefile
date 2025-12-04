@@ -16,7 +16,6 @@ setup:
 		docker compose exec $(APP_SERVER) php artisan key:generate; \
 		docker compose exec $(APP_SERVER) php artisan migrate; \
 		docker compose exec $(APP_SERVER) chmod -R 777 storage bootstrap/cache; \
-		docker compose exec $(APP_SERVER) php artisan serve --host 0.0.0.0 --port 8000; \
 	else \
 		echo "-> Laravelプロジェクトが存在するため、インストールをスキップしました。"; \
 	fi
