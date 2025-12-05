@@ -16,8 +16,8 @@ Route::get('/greeting', [GreetingController::class, 'greeting']);
 // 記事
 Route::get('/articles', [ArticleController::class, 'index']);
 Route::post('/articles', [ArticleController::class, 'store']);
-Route::get('/articles/{id}', [ArticleController::class, 'show']);
-Route::post('/articles/{id}/likes', [ArticleController::class, 'like']);
+Route::get('/articles/1', [ArticleController::class, 'show']);
+Route::post('/articles/1/likes', [ArticleController::class, 'like']);
 
 // // コメント
-Route::post('/articles/{article}/comments', [CommentController::class, 'store']);
+Route::post('/articles/1/comments', [CommentController::class, 'store']);
