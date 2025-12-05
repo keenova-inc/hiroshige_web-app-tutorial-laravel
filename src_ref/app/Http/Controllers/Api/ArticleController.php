@@ -54,8 +54,23 @@ class ArticleController extends Controller
         return response()->json($article);
     }
 
+    // いいねの投稿
     public function like(string $id)
     {
-        return "記事（ID:{$id}）にいいねしました";
+        $article = Article::find($id);
+
+        if(!$article) {
+            return response()->json([
+                "message" => "Not found."
+            ], 404);
+        }
+
+        $article->increment("like");
+
+        return response()->json([
+            "message" => "Article {$id} liked successfully.",
+            "article_id" => $id,
+            "like" => $article->like,
+        ]);
     }
 }
