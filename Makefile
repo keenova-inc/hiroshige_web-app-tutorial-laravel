@@ -22,7 +22,7 @@ setup:
 		docker compose cp ./docker-config/php/.env.laravel $(REF_APP_SERVER):/var/www/html/.env; \
 		docker compose exec $(REF_APP_SERVER) composer install; \
 		docker compose exec $(REF_APP_SERVER) php artisan key:generate; \
-		docker compose exec $(REF_APP_SERVER) php artisan migrate; \
+		docker compose exec $(REF_APP_SERVER) php artisan migrate:fresh --seed; \
 		docker compose exec $(REF_APP_SERVER) chmod -R 777 storage bootstrap/cache; \
 		docker compose exec $(REF_APP_SERVER) chown -R laravel:laravel /var/www/html; \
 	else \
