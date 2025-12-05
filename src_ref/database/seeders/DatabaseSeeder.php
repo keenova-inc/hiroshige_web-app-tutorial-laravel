@@ -15,11 +15,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            ArticleSeeder::class, // 記事を先に作成
+            CommentSeeder::class, // 次に、記事のIDを使ってコメントを作成
         ]);
     }
 }
