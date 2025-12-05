@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Article;
 
 class ArticleController extends Controller
 {
@@ -23,9 +24,18 @@ class ArticleController extends Controller
         return "記事を投稿しました";
     }
 
+    // 記事の取得
     public function show(string $id)
     {
-        return "記事（ID:{$id}）を取得しました";
+        $article = Article::with('comments')->find($id);
+
+        if (!$article) {
+            return response()->json([
+                "message" => "Article not found."
+            ], 404);
+        }
+
+        return response()->json($article);
     }
 
     public function like(string $id)
