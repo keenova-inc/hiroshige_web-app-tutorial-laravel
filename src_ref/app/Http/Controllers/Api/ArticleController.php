@@ -24,9 +24,20 @@ class ArticleController extends Controller
         return response()->json($articles);
     }
 
-    public function store()
+    // 記事の投稿
+    public function store(Request $request)
     {
-        return "記事を投稿しました";
+        $validatedData = $request->validate([
+            "title"    => "required|string|max:255",
+            "content"  => "required|string",
+            "username" => "required|string|max:50",
+        ]);
+
+        $article = Article::create($validatedData);
+
+        return response()->json([
+            "message" => "Article created successfully.",
+        ]);
     }
 
     // 記事の取得
