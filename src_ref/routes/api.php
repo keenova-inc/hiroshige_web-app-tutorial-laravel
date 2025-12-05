@@ -22,5 +22,5 @@ Route::post('/articles/{id}/likes', [ArticleController::class, 'like'])
     ->where('id', '[0-9]+');
 
 // // コメント
-Route::post('/articles/{id}/comments', [CommentController::class, 'store'])
+Route::post('/articles/{article}/comments', [CommentController::class, 'store'])
     ->where('id', '[0-9]+');
