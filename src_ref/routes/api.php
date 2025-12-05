@@ -16,8 +16,11 @@ Route::get('/greeting', [GreetingController::class, 'greeting']);
 // 記事
 Route::get('/articles', [ArticleController::class, 'index']);
 Route::post('/articles', [ArticleController::class, 'store']);
-Route::get('/articles/1', [ArticleController::class, 'show']);
-Route::post('/articles/1/likes', [ArticleController::class, 'like']);
+Route::get('/articles/{id}', [ArticleController::class, 'show'])
+    ->where('id', '[0-9]+');
+Route::post('/articles/{id}/likes', [ArticleController::class, 'like'])
+    ->where('id', '[0-9]+');
 
 // // コメント
-Route::post('/articles/1/comments', [CommentController::class, 'store']);
+Route::post('/articles/{id}/comments', [CommentController::class, 'store'])
+    ->where('id', '[0-9]+');

@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function store()
+    public function store(string $id)
     {
-        return "記事（ID:1）にコメントしました";
+        return "記事（ID:{$id}）にコメントしました";
     }
 }

@@ -17,13 +17,13 @@ class ArticleController extends Controller
         return "記事を投稿しました";
     }
 
-    public function show()
+    public function show(string $id)
     {
-        return "記事（ID:1）を取得しました";
+        return "記事（ID:{$id}）を取得しました";
     }
 
-    public function like()
+    public function like(string $id)
     {
-        return "記事（ID:1）にいいねしました";
+        return "記事（ID:{$id}）にいいねしました";
     }
 }
