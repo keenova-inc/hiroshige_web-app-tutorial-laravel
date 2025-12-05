@@ -7,9 +7,15 @@ use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return "記事一覧を取得しました";
+        $page = $request->query('page', 1);
+
+        if (!is_numeric($page) || $page < 1) {
+            return response("Invalid parameter.", 400);
+        }
+
+        return "記事一覧を取得しました（page={$page}）";
     }
 
     public function store()
