@@ -1,5 +1,6 @@
 # 変数定義
 SRC_DIR := src
+SRC_REF_DIR := src_ref
 APP_SERVER := laravel-app-server
 REF_APP_SERVER := ref-app-server
 
@@ -10,12 +11,14 @@ REF_APP_SERVER := ref-app-server
 setup:
 	@if [ ! -d $(SRC_DIR)/vendor ]; then \
 		mkdir $(SRC_DIR); \
+		cp ./docker-config/php/.env.laravel ./$(SRC_REF_DIR)/.env; \
 		make up; \
 		docker compose exec $(APP_SERVER) composer create-project --prefer-dist "laravel/laravel=12.*" .; \
 		docker compose cp ./docker-config/php/.env.laravel $(APP_SERVER):/var/www/html/.env; \
 		docker compose exec $(APP_SERVER) php artisan key:generate; \
 		docker compose exec $(APP_SERVER) php artisan migrate; \
 		docker compose exec $(APP_SERVER) chmod -R 777 storage bootstrap/cache; \
+		docker compose exec $(APP_SERVER) chown -R laravel:laravel /var/www/html; \
 	else \
 		echo "-> Laravelプロジェクトが存在するため、インストールをスキップしました。"; \
 	fi
