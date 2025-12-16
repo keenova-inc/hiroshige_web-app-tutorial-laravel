@@ -3,10 +3,12 @@
 namespace App\Providers;
 
 use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
-
+use App\Repositories\Article\ArticleRepository;
+use App\Repositories\Article\ArticleRepositoryInterface;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -14,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(ArticleRepositoryInterface::class, ArticleRepository::class);
     }
 
     /**

@@ -14,8 +14,18 @@ class Article extends Model
         'title', 'content', 'username',
     ];
 
+    public static function booted(): void
+    {
+        static::deleting(function (Article $article) {
+           $article->comments()->delete();
+        });
+    }
+
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
+
+    // public function someMethod(): static
+
 }
