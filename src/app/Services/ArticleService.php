@@ -6,8 +6,9 @@ namespace App\Services;
 use App\Models\Article;
 use App\Repositories\Article\ArticleRepositoryInterface;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ArticleService {
@@ -19,80 +20,89 @@ class ArticleService {
         $this->articleRepo = $articleRepository;
     }
 
-    public function search(int $page): ?LengthAwarePaginator
+    public function search(int $page): array
     {
         try {
-            $article = $this->articleRepo->search($page);
+            $articles = $this->articleRepo->search($page);
+            return ['articles' => $articles];
         } catch(Exception $e) {
             Log::error($e);
-            return null;
+            return ['status' => Response::HTTP_INTERNAL_SERVER_ERROR, 'articles' => null];
         }
-        return $article;
     }
 
-    public function show(int $id): ?Article
+    public function show(int $id): array
     {
         try {
             $article = $this->articleRepo->find($id);
-            if(is_null($article)) {
-                throw new Exception(__('api.not_exist',
-                ['id' => $id, 'attribute' => __('validation.attributes.article')]));
-            }
+            return ['article' => $article];
         } catch(Exception $e) {
             Log::error($e);
-            return null;
+
+            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+            if($e instanceof ModelNotFoundException) {
+                $status = Response::HTTP_NOT_FOUND;
+            }
+            return ['status' => $status, 'article' => null];
         }
-        return $article;
     }
 
-    public function create(array $data): ?Article
+    public function create(array $data): array
     {
         try {
             $article = $this->articleRepo->create($data);
-            return $article;
+            return ['article' => $article];
         } catch(Exception $e) {
-            // Log::debug("@@@@@@ Exception  Exception Exception@@@@@@");
             Log::error($e);
-            return null;
+            return ['status' => Response::HTTP_INTERNAL_SERVER_ERROR, 'article' => null];
         }
     }
 
-    public function update(array $data): ?Article
+    public function update(array $data): array
     {
         try {
             $article = $this->articleRepo->update($data);
-            if($article === null) {
-                throw new Exception(__('api.not_exist',
-                ['id' => $data['id'], 'attribute' => __('validation.attributes.article')]));
+            return ['article' => $article];
+        } catch(Exception $e) {
+            Log::error($e);
+
+            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+            if($e instanceof ModelNotFoundException) {
+                $status = Response::HTTP_NOT_FOUND;
             }
-
-            return $article;
-        } catch(Exception $e) {
-            // Log::debug("@@@@@@ Exception  Exception Exception@@@@@@");
-            Log::error($e);
-            return null;
+            return ['status' => $status, 'article' => null];
         }
     }
 
-    public function delete(int $id): ?Article
+    public function delete(int $id): array
     {
         try {
-            return $this->articleRepo->delete($id);
+            $article = $this->articleRepo->delete($id);
+            return ['article' => $article];
         } catch(Exception $e) {
             Log::error($e);
-            return null;
+
+            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+            if($e instanceof ModelNotFoundException) {
+                $status = Response::HTTP_NOT_FOUND;
+            }
+            return ['status' => $status, 'article' => null];
         }
     }
 
-    public function like(int $id): ?Article
+    public function like(int $id): array
     {
         try {
-            return $this->articleRepo->like($id);
+            $article = $this->articleRepo->like($id);
+            return ['article' => $article];
         } catch(Exception $e) {
             Log::error($e);
-            return null;
+
+            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+            if($e instanceof ModelNotFoundException) {
+                $status = Response::HTTP_NOT_FOUND;
+            }
+            return ['status' => $status, 'article' => null];
         }
     }
-
-
 }

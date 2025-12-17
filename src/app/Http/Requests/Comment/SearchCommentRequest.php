@@ -1,15 +1,17 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Requests\Article;
+namespace App\Http\Requests\Comment;
 
-use App\Models\Article;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\FindRecord;
+use App\Models\Article;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
+use App\Rules\Page;
 use Illuminate\Contracts\Validation\Validator;
 
-class FindArticleRequest extends FormRequest
+
+class SearchCommentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,6 +29,7 @@ class FindArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'page' => [new Page],
             'id' => ['integer', new FindRecord(new Article)],
         ];
     }
@@ -39,9 +42,10 @@ class FindArticleRequest extends FormRequest
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
-            response(['message' => $validator->errors()->get('id')[0]],
-                Response::HTTP_NOT_FOUND),
+            response(['message' => $validator->errors()->get('page')[0]],
+                Response::HTTP_BAD_REQUEST),
         );
     }
+
 
 }

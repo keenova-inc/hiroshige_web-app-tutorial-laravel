@@ -21,5 +21,6 @@ class RouteServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Route::pattern('id', '[1-9][0-9]*');
+        Route::pattern('comment_id', '[1-9][0-9]*');
     }
 }

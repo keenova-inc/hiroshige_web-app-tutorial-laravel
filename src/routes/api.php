@@ -13,6 +13,7 @@ Route::get('/greeting', [GreetingController::class, 'greeting']);
 // })->middleware('auth:sanctum');
 
 Route::prefix('/articles')->group(function () {
+    // 記事
     Route::controller(ArticleController::class)->group(function () {
         Route::get('/', 'index');
         Route::get('/{id}', 'show');
@@ -20,6 +21,17 @@ Route::prefix('/articles')->group(function () {
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'delete');
         Route::post('/{id}/likes', 'like');
+
+        // コメント
+        Route::prefix('/{id}/comments')->group(function () {
+            Route::controller(CommentController::class)->group(function () {
+                Route::get('/', 'index');
+                Route::get('/{comment_id}', 'show');
+                Route::post('/', 'create');
+                Route::put('/{comment_id}', 'update');
+                Route::delete('/{comment_id}', 'delete');
+            });
+        });
+
     });
-    Route::post('/{article}/comments', [CommentController::class, 'create']);
 });

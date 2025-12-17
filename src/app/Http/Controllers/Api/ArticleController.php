@@ -22,62 +22,72 @@ class ArticleController extends Controller
         $this->articleSvc = $articleService;
     }
 
+    /**
+     * 記事一覧を取得
+     */
     public function index(SearchArticleRequest $request): JsonResponse
     {
         // \Log::debug(print_r($request->all(),true));
         $page = (int)$request->validated('page');
 
-        $articles = $this->articleSvc->search($page);
+        $data = $this->articleSvc->search($page);
+        $articles = $data['articles'];
+        $status = $data['status'] ?? Response::HTTP_OK;
 
-        $status = $articles ?  Response::HTTP_OK : Response::HTTP_INTERNAL_SERVER_ERROR;
         return response()->json(compact('articles'), $status);
     }
 
+    /**
+     * 記事を取得
+     */
     public function show(FindArticleRequest $request): JsonResponse
     {
         $id = (int)$request->validated('id');
 
-        $article = $this->articleSvc->show($id);
+        $data = $this->articleSvc->show($id);
+        $article = $data['article'];
+        $status = $data['status'] ?? Response::HTTP_OK;
 
-        $status = $article ? Response::HTTP_OK : Response::HTTP_INTERNAL_SERVER_ERROR;
         return response()->json(compact('article'), $status);
     }
 
     public function create(CreateArticleRequest $request): JsonResponse
     {
-        \Log::debug(print_r($request->validated(), true));
+        // \Log::debug(print_r($request->validated(), true));
 
-        $article = $this->articleSvc->create($request->validated());
+        $data = $this->articleSvc->create($request->validated());
+        $article = $data['article'];
+        $status = $data['status'] ?? Response::HTTP_OK;
 
         $attribute = __('validation.attributes.article');
         $message = $article ? __('api.create.success', ['id' => $article->id, 'attribute' => $attribute])
             : __('api.create.fail', ['attribute' => $attribute]);
-        $status = $article ? Response::HTTP_OK : Response::HTTP_INTERNAL_SERVER_ERROR;
 
         return response()->json(compact('message', 'article'), $status);
     }
 
-    // ここから。
     public function update(UpdateArticleRequest $request): JsonResponse
     {
-        \Log::debug(print_r($request->validated(), true));
-
-        $article = $this->articleSvc->update($request->validated());
-
+        // \Log::debug(print_r($request->validated(), true));
         $id = $request->validated('id');
-        $message = $article ? __('api.update.success', ['id' => $id]) : __('api.update.fail', ['id' => $id]);
-        $status = $article ? Response::HTTP_OK : Response::HTTP_INTERNAL_SERVER_ERROR;
+
+        $data = $this->articleSvc->update($request->validated());
+        $article = $data['article'];
+        $status = $data['status'] ?? Response::HTTP_OK;
+        $message = is_null($article) ? __('api.update.fail', ['id' => $id]) :  __('api.update.success', ['id' => $id]);
+
         return response()->json(compact('message', 'article'), $status);
     }
 
     public function delete(FindArticleRequest $request): JsonResponse
     {
         $id = (int)$request->validated('id');
-        $article = $this->articleSvc->delete($id);
-        // \Log::debug("RESULT ************ ");
-        \Log::debug(print_r($article->toArray(), true));
-        $message = $article ? __('api.delete.success', ['id' => $id]) : __('api.delete.fail', ['id' => $id]);
-        $status = $article ? Response::HTTP_OK : Response::HTTP_INTERNAL_SERVER_ERROR;
+
+        $data = $this->articleSvc->delete($id);
+        $article = $data['article'];
+        $status = $data['status'] ?? Response::HTTP_OK;
+        $message = is_null($article) ? __('api.delete.fail', ['id' => $id]) : __('api.delete.success', ['id' => $id]);
+
         return response()->json(compact('message'), $status);
     }
 
@@ -85,10 +95,10 @@ class ArticleController extends Controller
     {
         $id = (int)$request->validated('id');
 
-        $article = $this->articleSvc->like($id);
-
-        $message = $article ? __('api.update.success', ['id' => $id]) : __('api.update.fail', ['id' => $id]);
-        $status = $article ? Response::HTTP_OK : Response::HTTP_INTERNAL_SERVER_ERROR;
+        $data = $this->articleSvc->like($id);
+        $article = $data['article'];
+        $status = $data['status'] ?? Response::HTTP_OK;
+        $message = is_null($article) ? __('api.update.fail', ['id' => $id]) :  __('api.update.success', ['id' => $id]);
 
         return response()->json(compact('message', 'article'), $status);
     }

@@ -145,6 +145,7 @@ return [
         'username' => 'ユーザー名',
         'comment' => 'コメント',
         'page' => 'ページ',
+        'message' => 'コメント',
     ],
 ];
 

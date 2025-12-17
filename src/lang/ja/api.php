@@ -7,11 +7,13 @@ return [
     ],
     'update' => [
         'fail' => "ID::idの更新に失敗しました。",
-        'success' => "ID::idの更新に成功しました。"
+        'success' => "ID::idの更新に成功しました。",
+        'not_execute' => 'ID::idの更新が実行されませんでした。',
     ],
     'delete' => [
         'fail' => "ID::idの削除に失敗しました。",
-        'success' => "ID::idの削除に成功しました。"
+        'success' => "ID::idの削除に成功しました。",
+        'not_execute' => 'ID::idの削除が実行されませんでした。',
     ],
     // 'search' => [
     //     'fail' => ":attributeの検索に失敗しました。",

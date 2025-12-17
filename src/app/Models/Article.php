@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models;
 
@@ -14,10 +14,11 @@ class Article extends Model
         'title', 'content', 'username',
     ];
 
-    public static function booted(): void
+    protected static function boot()
     {
+        parent::boot();
         static::deleting(function (Article $article) {
-           $article->comments()->delete();
+            $article->comments()->delete();
         });
     }
 
@@ -25,7 +26,4 @@ class Article extends Model
     {
         return $this->hasMany(Comment::class);
     }
-
-    // public function someMethod(): static
-
 }

@@ -9,7 +9,6 @@ class GreetingController extends Controller
 {
     public function greeting()
     {
-        Log::debug('EXIST: '.class_exists(\App\Repositories\Article\ArticleRepositoryInterface::class));
         return 'Hello Controller';
     }
 }

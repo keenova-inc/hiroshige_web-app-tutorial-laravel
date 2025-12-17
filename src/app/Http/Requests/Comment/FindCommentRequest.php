@@ -1,15 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Requests\Article;
+namespace App\Http\Requests\Comment;
 
-use App\Models\Article;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\FindRecord;
+use App\Models\Article;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
-use Illuminate\Contracts\Validation\Validator;
 
-class FindArticleRequest extends FormRequest
+class FindCommentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,12 +28,14 @@ class FindArticleRequest extends FormRequest
     {
         return [
             'id' => ['integer', new FindRecord(new Article)],
+            'comment_id' => ['integer'],
         ];
     }
 
     public function prepareForValidation()
     {
         $this->merge(['id' => $this->route('id')]);
+        $this->merge(['comment_id' => $this->route('comment_id')]);
     }
 
     public function failedValidation(Validator $validator)

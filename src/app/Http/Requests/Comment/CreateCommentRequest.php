@@ -1,15 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Requests\Article;
+namespace App\Http\Requests\Comment;
 
-use App\Models\Article;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\Comment\CommentMessage;
 use App\Rules\FindRecord;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Http\Response;
-use Illuminate\Contracts\Validation\Validator;
+use App\Models\Article;
 
-class FindArticleRequest extends FormRequest
+class CreateCommentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,6 +25,7 @@ class FindArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'message' => ['required', new CommentMessage()],
             'id' => ['integer', new FindRecord(new Article)],
         ];
     }
@@ -34,14 +33,6 @@ class FindArticleRequest extends FormRequest
     public function prepareForValidation()
     {
         $this->merge(['id' => $this->route('id')]);
-    }
-
-    public function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(
-            response(['message' => $validator->errors()->get('id')[0]],
-                Response::HTTP_NOT_FOUND),
-        );
     }
 
 }
