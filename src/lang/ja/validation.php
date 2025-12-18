@@ -142,10 +142,14 @@ return [
         'article' => '記事',
         'title' => 'タイトル',
         'content' => '内容',
-        'username' => 'ユーザー名',
+        'username' => '名前',
         'comment' => 'コメント',
         'page' => 'ページ',
         'message' => 'コメント',
+        'name' => 'ユーザ名',
+        'email' => 'メールアドレス',
+        'password' => 'パスワード',
+        'user' => 'ユーザ',
     ],
 ];
 
