@@ -3,17 +3,22 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
-use Exception;
+use App\Repositories\User\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class CreateNewUser implements CreatesNewUsers
 {
     use PasswordValidationRules;
+
+    private $userRepo;
+
+    public function __construct(UserRepositoryInterface $userRepository)
+    {
+        $this->userRepo = $userRepository;
+    }
 
     /**
      * Validate and create a newly registered user.
@@ -22,7 +27,7 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
-        Validator::make($input, [
+        $validatedData = Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
@@ -34,14 +39,8 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
-        try {
-            return User::create([
-                'name' => $input['name'],
-                'email' => $input['email'],
-                'password' => Hash::make($input['password']),
-            ]);
-        } catch(Exception $e) {
-            Log::error($e);
-        }
+
+
+        return $this->userRepo->create($validatedData);
     }
 }

@@ -42,7 +42,7 @@ class SearchCommentRequest extends FormRequest
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
-            response(['message' => $validator->errors()->get('page')[0]],
+            response(['message' => $validator->errors()],
                 Response::HTTP_BAD_REQUEST),
         );
     }

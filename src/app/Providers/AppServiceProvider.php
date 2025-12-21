@@ -3,12 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Database\Events\QueryExecuted;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
-use App\Repositories\Article\{ArticleRepositoryInterface, ArticleRepository};
-use App\Repositories\Comment\{CommentRepositoryInterface, CommentRepository};
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -16,8 +13,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(ArticleRepositoryInterface::class, ArticleRepository::class);
-        $this->app->bind(CommentRepositoryInterface::class, CommentRepository::class);
+        $interfaces = glob(app_path('Repositories') . '/*/*Interface.php');
+
+        foreach($interfaces as $interface) {
+            $filePath = explode('app/', $interface)[1];
+            $interfaceFqcn = "App\\" . str_replace(['/', '.php'], ['\\', ''], $filePath);
+            $repositoryFqcn = str_replace('Interface', '', $interfaceFqcn);
+
+            $this->app->bind($interfaceFqcn, $repositoryFqcn);
+        }
     }
 
     /**

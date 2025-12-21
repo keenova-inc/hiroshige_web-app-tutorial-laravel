@@ -16,28 +16,28 @@ interface CommentRepositoryInterface
     /**
      * コメントを取得
      * @param array $data
-     * @return Comment
+     * @return ?Comment
      */
-    public function find(array $data): Comment;
+    public function find(array $data): ?Comment;
 
     /**
      * コメント作成
      * @param array $data
-     * @return Comment
+     * @return ?Comment
      */
-    public function create(array $data): Comment;
+    public function create(array $data): ?Comment;
 
     /**
      * コメント更新
      * @param array $data
-     * @return Comment
+     * @return ?Comment
      */
-    public function update(array $data): Comment;
+    public function update(array $data): ?Comment;
 
     /**
      * コメント削除
      * @param array $data
-     * @return Comment
+     * @return ?Comment
      */
-    public function delete(array $data): Comment;
+    public function delete(array $data): ?Comment;
 }

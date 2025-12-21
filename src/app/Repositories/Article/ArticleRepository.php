@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Repositories\Article;
 
@@ -22,14 +20,9 @@ class ArticleRepository implements ArticleRepositoryInterface
         return Article::paginate(CommonConst::PER_PAGE);
     }
 
-    public function find(int $id): Article
+    public function find(int $id): ?Article
     {
-        $article = Article::with('comments')->find($id);
-        if(is_null($article)) {
-            throw new ModelNotFoundException(__('api.not_exist',
-            ['id' => $id, 'attribute' => __('validation.attributes.article')]));
-        }
-        return $article;
+        return Article::with('comments')->find($id);
     }
 
     public function create(array $data): Article
@@ -37,30 +30,30 @@ class ArticleRepository implements ArticleRepositoryInterface
         return Article::create($data);
     }
 
-    public function update(array $data): Article
+    public function update(array $data): ?Article
     {
         $id = $data['id'];
         $article = Article::find($id);
+
         if(is_null($article)) {
-            throw new ModelNotFoundException(__('api.not_exist',
-            ['id' => $id, 'attribute' => __('validation.attributes.article')]));
+            return null;
         }
 
         $result = $article->update($data);
+
         // 更新失敗
         if($result === 0) {
             throw new Exception(__('api.update.not_execute', compact('id')));
         }
-        return $article->reflesh();
+        return $article->fresh();
     }
 
-    public function delete(int $id): Article
+    public function delete(int $id): ?Article
     {
         return DB::transaction(function() use($id) {
             $article = Article::find($id);
             if(is_null($article)) {
-                throw new ModelNotFoundException(__('api.not_exist',
-                ['id' => $id, 'attribute' => __('validation.attributes.article')]));
+                return null;
             }
 
             $result = $article->delete();
@@ -68,16 +61,15 @@ class ArticleRepository implements ArticleRepositoryInterface
             if($result === 0) {
                 throw new Exception(__('api.delete.not_execute', compact('id')));
             }
-            return $article->refresh();
+            return $article->fresh();
         });
     }
 
-    public function like(int $id): Article
+    public function like(int $id): ?Article
     {
         $article = Article::find($id);
         if(is_null($article)) {
-            throw new ModelNotFoundException(__('api.not_exist',
-            ['id' => $id, 'attribute' => __('validation.attributes.article')]));
+            return null;
         }
 
         $result = $article->increment('like');
@@ -86,7 +78,7 @@ class ArticleRepository implements ArticleRepositoryInterface
             throw new Exception(__('api.update.not_execute', compact('id')));
         }
 
-        return $article->refresh();
+        return $article->fresh();
     }
 
 }

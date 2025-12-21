@@ -17,9 +17,9 @@ interface ArticleRepositoryInterface
     /**
      * 記事を取得
      * @param int $id
-     * @return Article
+     * @return ?Article
      */
-    public function find(int $id): Article;
+    public function find(int $id): ?Article;
 
     /**
      * 記事作成
@@ -31,21 +31,21 @@ interface ArticleRepositoryInterface
     /**
      * 記事更新
      * @param array $data
-     * @return Article
+     * @return ?Article
      */
-    public function update(array $data): Article;
+    public function update(array $data): ?Article;
 
     /**
      * 記事削除
      * @param int $id
-     * @return Article
+     * @return ?Article
      */
-    public function delete(int $id): Article;
+    public function delete(int $id): ?Article;
 
     /**
-     * 記事のlikeをincrement
+     * 記事の「いいね」をincrement
      * @param int $id
-     * @return Article
+     * @return ?Article
      */
-    public function like(int $id): Article;
+    public function like(int $id): ?Article;
 }

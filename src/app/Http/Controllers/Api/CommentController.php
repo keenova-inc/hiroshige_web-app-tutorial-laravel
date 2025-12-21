@@ -41,7 +41,6 @@ class CommentController extends Controller
     {
         $data = $this->commentSvc->show($request->validated());
         $comment = $data['comment'];
-        \Log::debug(print_r($comment->toArray(), true));
         $status = $data['status'] ?? Response::HTTP_OK;
 
         return response()->json(compact('comment'), $status);
@@ -52,7 +51,7 @@ class CommentController extends Controller
      */
     public function create(CreateCommentRequest $request): JsonResponse
     {
-        \Log::debug(print_r($request->validated(), true));
+        // \Log::debug(print_r($request->validated(), true));
 
         $data = $this->commentSvc->create($request->validated());
         $comment = $data['comment'];
@@ -69,7 +68,6 @@ class CommentController extends Controller
      */
     public function update(UpdateCommentRequest $request): JsonResponse
     {
-        \Log::debug(print_r($request->validated(), true));
         $commentId = $request->validated('comment_id');
 
         $data = $this->commentSvc->update($request->validated());
@@ -91,8 +89,8 @@ class CommentController extends Controller
         $data = $this->commentSvc->delete($validatedData);
         $comment = $data['comment'];
         $status = $data['status'] ?? Response::HTTP_OK;
-        $message = is_null($comment) ? __('api.delete.fail', ['id' => $validatedData['id']])
-        : __('api.delete.success', ['id' => $validatedData['id']]);
+        $message = is_null($comment) ? __('api.delete.fail', ['id' => $validatedData['comment_id']])
+        : __('api.delete.success', ['id' => $validatedData['comment_id']]);
 
         return response()->json(compact('message'), $status);
     }

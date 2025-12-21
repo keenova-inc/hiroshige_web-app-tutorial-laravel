@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Repositories\Comment;
 
@@ -20,39 +18,30 @@ class CommentRepository implements CommentRepositoryInterface
             CommonConst::PER_PAGE, ['*'], 'page', $page);
     }
 
-    public function find($data): Comment
+    public function find($data): ?Comment
     {
-        \Log::debug(print_r($data, true));
         $commentId = (int)$data['comment_id'];
 
-        $comment = Comment::where('article_id', (int)$data['id'])
+        return Comment::where('article_id', (int)$data['id'])
         ->where('id', $commentId)
         ->with('article')
         ->first();
-
-        if(is_null($comment)) {
-            throw new ModelNotFoundException(__('api.not_exist',
-            ['id' => $commentId, 'attribute' => __('validation.attributes.message')]));
-        }
-
-        return $comment;
     }
 
-    public function create(array $data): Comment
+    public function create(array $data): ?Comment
     {
         $articleId = $data['id'];
         unset($data['id']);
 
         $article = Article::find($articleId);
         if(is_null($article)) {
-            throw new ModelNotFoundException(__('api.not_exist',
-            ['id' => $articleId, 'attribute' => __('validation.attributes.article')]));
+            return null;
         }
 
         return $article->comments()->create($data);
     }
 
-    public function update(array $data): Comment
+    public function update(array $data): ?Comment
     {
         // \Log::debug(print_r($data, true));
 
@@ -62,8 +51,7 @@ class CommentRepository implements CommentRepositoryInterface
         $comment = Comment::where('article_id', $id)
         ->where('id', $commentId)->first();
         if(is_null($comment)) {
-            throw new ModelNotFoundException(__('api.not_exist',
-            ['id' => $commentId, 'attribute' => __('validation.attributes.message')]));
+            return null;
         }
 
         // 更新
@@ -73,10 +61,10 @@ class CommentRepository implements CommentRepositoryInterface
             throw new Exception(__('api.update.not_execute', compact('id')));
         }
 
-        return $comment->refresh();
+        return $comment->fresh();
     }
 
-    public function delete(array $data): Comment
+    public function delete(array $data): ?Comment
     {
         return DB::transaction(function() use($data) {
             $comment = Comment::where('id', $data['comment_id'])
@@ -84,8 +72,7 @@ class CommentRepository implements CommentRepositoryInterface
             ->first();
 
             if(is_null($comment)) {
-                throw new ModelNotFoundException(__('api.not_exist',
-                ['id' => $data['comment_id'], 'attribute' => __('validation.attributes.message')]));
+                return null;
             }
 
             $result = $comment->delete();
@@ -93,7 +80,7 @@ class CommentRepository implements CommentRepositoryInterface
             if($result === 0) {
                 throw new Exception(__('api.delete.not_execute', compact('id')));
             }
-            return $comment->refresh();
+            return $comment->fresh();
         });
     }
 

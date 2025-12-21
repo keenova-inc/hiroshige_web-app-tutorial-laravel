@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Actions\Fortify\CreateNewUser;
+use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
@@ -22,11 +24,17 @@ class UserController extends Controller
     {
         $params = $request->all();
 
-        $user = $this->userSvc->create($params);
+        try {
+            $user = $this->userSvc->create($params);
+        } catch(Exception $e) {
+            $user = null;
+        }
+
         $attribute = __('validation.attributes.user');
         $message = $user ? __('api.create.success', ['id' => $user->id, 'attribute' => $attribute])
             : __('api.create.fail', ['attribute' => $attribute]);
+        $status = $user ? Response::HTTP_OK : Response::HTTP_INTERNAL_SERVER_ERROR;
 
-        return response()->json(compact('user', 'message'));
+        return response()->json(compact('user', 'message'), $status);
     }
 }
