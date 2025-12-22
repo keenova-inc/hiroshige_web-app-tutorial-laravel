@@ -13,7 +13,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
 use Laravel\Fortify\Fortify;
-use Laravel\Fortify\Contracts\LoginResponse;
+use Laravel\Fortify\Contracts\{LoginResponse, LogoutResponse};
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -26,11 +26,18 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->instance(LoginResponse::class, new class implements LoginResponse {
             public function toResponse($request)
             {
-                $hashedToken = $request->user()->createToken('laravelApp');
-                $token = $hashedToken->plainTextToken;
                 return response()->json([
                     'message' => trans('api.login.success'),
-                    'bearerToken' => $token,
+                ]);
+            }
+        });
+
+        // ログアウト後API tokenを返却
+        $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
+            public function toResponse($request)
+            {
+                return response()->json([
+                    'message' => trans('api.logout'),
                 ]);
             }
         });

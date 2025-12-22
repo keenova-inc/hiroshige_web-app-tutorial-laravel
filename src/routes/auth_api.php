@@ -37,6 +37,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         });
     });
 
-    // ログアウト
-    Route::post('/logout',  [AuthController::class, 'logout']);
+    // // ログアウト（Cookieでの認証時はFortifyのPOST /logoutを使用）
+    // Route::post('/logout',  [AuthController::class, 'logout']);
 });
