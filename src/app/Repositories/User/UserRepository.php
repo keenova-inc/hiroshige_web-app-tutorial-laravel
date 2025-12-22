@@ -4,9 +4,6 @@ namespace App\Repositories\User;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Exception;
-use Illuminate\Support\Facades\Log;
-use PDOException;
 
 class UserRepository implements UserRepositoryInterface {
 

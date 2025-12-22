@@ -20,6 +20,10 @@ return [
     //     'success' => ":attributeの検索に成功しました。"
     // ],
     'not_exist' => 'ID::id 存在しない:attributeです。',
-    'logouted' => 'ログアウトに成功しました。',
+    'login' => [
+        'fail' => "ログインに失敗しました。",
+        'success' => "ログインに成功しました。",
+    ],
+    'logout' => 'ログアウトに成功しました。',
 
 ];

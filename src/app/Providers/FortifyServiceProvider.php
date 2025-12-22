@@ -29,15 +29,11 @@ class FortifyServiceProvider extends ServiceProvider
                 $hashedToken = $request->user()->createToken('laravelApp');
                 $token = $hashedToken->plainTextToken;
                 return response()->json([
+                    'message' => trans('api.login.success'),
                     'bearerToken' => $token,
                 ]);
             }
         });
-
-        // $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
-        //     //
-        // });
-
     }
 
     /**
