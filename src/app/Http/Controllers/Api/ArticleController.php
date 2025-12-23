@@ -27,10 +27,9 @@ class ArticleController extends Controller
      */
     public function index(SearchArticleRequest $request): JsonResponse
     {
-        // \Log::debug(print_r($request->all(),true));
-        $page = (int)$request->validated('page');
+        $page = $request->validated('page') ?? 1;
 
-        $data = $this->articleSvc->search($page);
+        $data = $this->articleSvc->search((int)$page);
         $articles = $data['articles'];
         $status = $data['status'] ?? Response::HTTP_OK;
 

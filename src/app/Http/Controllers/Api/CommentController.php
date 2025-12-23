@@ -27,7 +27,9 @@ class CommentController extends Controller
      */
     public function index(SearchCommentRequest $request): JsonResponse
     {
-        $data = $this->commentSvc->search($request->validated());
+        $validatedData = $request->validated();
+        $validatedData['page'] = $validatedData['page'] ?? 1;
+        $data = $this->commentSvc->search($validatedData);
         $comments = $data['comments'];
         $status = $data['status'] ?? Response::HTTP_OK;
 
