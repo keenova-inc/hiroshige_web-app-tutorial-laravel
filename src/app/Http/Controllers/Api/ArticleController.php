@@ -57,7 +57,7 @@ class ArticleController extends Controller
 
         $data = $this->articleSvc->create($request->validated());
         $article = $data['article'];
-        $status = $data['status'] ?? Response::HTTP_OK;
+        $status = $data['status'] ?? Response::HTTP_CREATED;
 
         $attribute = __('validation.attributes.article');
         $message = $article ? __('api.create.success', ['id' => $article->id, 'attribute' => $attribute])

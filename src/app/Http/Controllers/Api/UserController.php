@@ -33,7 +33,7 @@ class UserController extends Controller
         $attribute = __('validation.attributes.user');
         $message = $user ? __('api.create.success', ['id' => $user->id, 'attribute' => $attribute])
             : __('api.create.fail', ['attribute' => $attribute]);
-        $status = $user ? Response::HTTP_OK : Response::HTTP_INTERNAL_SERVER_ERROR;
+        $status = $user ? Response::HTTP_CREATED : Response::HTTP_INTERNAL_SERVER_ERROR;
 
         return response()->json(compact('user', 'message'), $status);
     }

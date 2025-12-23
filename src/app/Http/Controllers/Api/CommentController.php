@@ -55,7 +55,7 @@ class CommentController extends Controller
 
         $data = $this->commentSvc->create($request->validated());
         $comment = $data['comment'];
-        $status = $data['status'] ?? Response::HTTP_OK;
+        $status = $data['status'] ?? Response::HTTP_CREATED;
         $attribute = __('validation.attributes.message');
         $message = is_null($comment) ? __('api.create.fail', ['attribute' => $attribute])
         : __('api.create.success', ['id' => $comment->id, 'attribute' => $attribute]);
