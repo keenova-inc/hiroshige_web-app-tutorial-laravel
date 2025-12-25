@@ -28,7 +28,7 @@ class CreateNewUser implements CreatesNewUsers
     public function create(array $input): User
     {
         $validatedData = Validator::make($input, [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:100'],
             'email' => [
                 'required',
                 'string',
@@ -38,8 +38,6 @@ class CreateNewUser implements CreatesNewUsers
             ],
             'password' => $this->passwordRules(),
         ])->validate();
-
-
 
         return $this->userRepo->create($validatedData);
     }

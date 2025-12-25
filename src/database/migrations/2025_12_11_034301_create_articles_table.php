@@ -14,7 +14,8 @@ return new class () extends Migration {
             $table->id();
             $table->string('title');
             $table->text('content');
-            $table->string('username');
+            $table->foreignId('user_id');
+            $table->string('username'); // 履歴のため正規化しない
             $table->unsignedInteger('like')->default(0);
             $table->timestamps();
         });

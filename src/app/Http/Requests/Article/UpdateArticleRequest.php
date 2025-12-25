@@ -4,9 +4,8 @@ namespace App\Http\Requests\Article;
 
 use App\Models\Article;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Rules\FindRecord;
-use App\Rules\Article\{ArticleTitle, ArticleUserName};
-use Illuminate\Contracts\Validation\Validator;
+use App\Rules\Article\ArticleTitle;
+use Illuminate\Http\Response;
 
 class UpdateArticleRequest extends FormRequest
 {
@@ -15,7 +14,14 @@ class UpdateArticleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $articleId = $this->id;
+        $article = Article::find($articleId);
+        if(is_null($article)) {
+            abort(Response::HTTP_NOT_FOUND, trans('api.not_exist',
+            ['id' => $articleId, 'attribute' => __('validation.attributes.article')]));
+        }
+
+        return $this->user()->id === $article->user_id;
     }
 
     /**
@@ -28,8 +34,7 @@ class UpdateArticleRequest extends FormRequest
         return [
             'title' => ['required', new ArticleTitle],
             'content' => ['required'],
-            'username' => ['required', new ArticleUserName],
-            'id' => [new FindRecord(new Article)],
+            'id' => [],
         ];
     }
 
@@ -37,4 +42,12 @@ class UpdateArticleRequest extends FormRequest
     {
         $this->merge(['id' => $this->route('id')]);
     }
+
+    protected function failedAuthorization()
+    {
+        abort(Response::HTTP_FORBIDDEN,
+        trans('api.not_authorized', ['id' => $this->route('id')]));
+    }
+
+
 }

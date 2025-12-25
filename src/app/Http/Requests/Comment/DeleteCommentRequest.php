@@ -3,11 +3,10 @@
 namespace App\Http\Requests\Comment;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Rules\Comment\CommentMessage;
-use App\Models\Comment;
 use Illuminate\Http\Response;
+use App\Models\Comment;
 
-class UpdateCommentRequest extends FormRequest
+class DeleteCommentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -35,7 +34,6 @@ class UpdateCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'message' => ['required', new CommentMessage],
             'id' => [],
             'comment_id' => [],
         ];
@@ -52,6 +50,5 @@ class UpdateCommentRequest extends FormRequest
         abort(Response::HTTP_FORBIDDEN,
         trans('api.not_authorized', ['id' => $this->route('comment_id')]));
     }
-
 
 }

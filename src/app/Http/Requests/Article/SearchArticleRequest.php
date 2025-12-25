@@ -37,9 +37,11 @@ class SearchArticleRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(
-            response(['message' => $validator->errors()->get('page')[0]],
-                Response::HTTP_BAD_REQUEST),
-        );
+        if($validator->errors()->has('page')) {
+            throw new HttpResponseException(
+                response(['message' => $validator->errors()->get('page')[0]],
+                    Response::HTTP_BAD_REQUEST),
+            );
+        }
     }
 }

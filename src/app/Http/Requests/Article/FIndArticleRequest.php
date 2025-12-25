@@ -27,7 +27,7 @@ class FindArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['integer', new FindRecord(new Article)],
+            'id' => [new FindRecord(new Article, trans('validation.attributes.article'))],
         ];
     }
 

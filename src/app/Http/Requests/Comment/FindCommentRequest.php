@@ -4,9 +4,8 @@ namespace App\Http\Requests\Comment;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\FindRecord;
-use App\Models\Article;
+use App\Models\Comment;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 
 class FindCommentRequest extends FormRequest
@@ -27,8 +26,8 @@ class FindCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['integer', new FindRecord(new Article)],
-            'comment_id' => ['integer'],
+            'id' => [],
+            'comment_id' => [new FindRecord(new Comment, trans('validation.attributes.message'))],
         ];
     }
 
@@ -40,10 +39,10 @@ class FindCommentRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(
-            response(['message' => $validator->errors()->get('id')[0]],
-                Response::HTTP_NOT_FOUND),
-        );
+        if($validator->errors()->has('comment_id')) {
+            abort(Response::HTTP_NOT_FOUND,
+            $validator->errors()->get('comment_id')[0]);
+        }
     }
 
 }

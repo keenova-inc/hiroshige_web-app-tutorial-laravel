@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Article\{SearchArticleRequest, CreateArticleRequest,
-    UpdateArticleRequest, FindArticleRequest};
-use App\Models\Article;
+    UpdateArticleRequest, FindArticleRequest, DeleteArticleRequest};
 use App\Services\ArticleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -24,6 +23,8 @@ class ArticleController extends Controller
 
     /**
      * 記事一覧を取得
+     * @param SearchArticleRequest $request
+     * @return JsonResponse
      */
     public function index(SearchArticleRequest $request): JsonResponse
     {
@@ -38,6 +39,8 @@ class ArticleController extends Controller
 
     /**
      * 記事を取得
+     * @param FindArticleRequest $request
+     * @return JsonResponse
      */
     public function show(FindArticleRequest $request): JsonResponse
     {
@@ -50,11 +53,19 @@ class ArticleController extends Controller
         return response()->json(compact('article'), $status);
     }
 
+     /**
+     * 記事作成
+     * @param CreateArticleRequest $request
+     * @return JsonResponse
+     */
     public function create(CreateArticleRequest $request): JsonResponse
     {
         // \Log::debug(print_r($request->validated(), true));
+        $validatedData = $request->validated();
+        $validatedData['user_id'] = $request->user()['id'];
+        $validatedData['username'] = $request->user()['name'];
 
-        $data = $this->articleSvc->create($request->validated());
+        $data = $this->articleSvc->create($validatedData);
         $article = $data['article'];
         $status = $data['status'] ?? Response::HTTP_CREATED;
 
@@ -65,10 +76,17 @@ class ArticleController extends Controller
         return response()->json(compact('message', 'article'), $status);
     }
 
+    /**
+     * 記事更新
+     * @param UpdateArticleRequest $request
+     * @return JsonResponse
+     */
     public function update(UpdateArticleRequest $request): JsonResponse
     {
         // \Log::debug(print_r($request->validated(), true));
         $id = $request->validated('id');
+
+        $validatedData = $request->validated();
 
         $data = $this->articleSvc->update($request->validated());
         $article = $data['article'];
@@ -78,7 +96,12 @@ class ArticleController extends Controller
         return response()->json(compact('message', 'article'), $status);
     }
 
-    public function delete(FindArticleRequest $request): JsonResponse
+    /**
+     * 記事削除
+     * @param DeleteArticleRequest $request
+     * @return JsonResponse
+     */
+    public function delete(DeleteArticleRequest $request): JsonResponse
     {
         $id = (int)$request->validated('id');
 
@@ -90,6 +113,11 @@ class ArticleController extends Controller
         return response()->json(compact('message'), $status);
     }
 
+    /**
+     * 記事に「いいね」をする
+     * @param FindArticleRequest $request
+     * @return JsonResponse
+     */
     public function like(FindArticleRequest $request): JsonResponse
     {
         $id = (int)$request->validated('id');
@@ -101,6 +129,5 @@ class ArticleController extends Controller
 
         return response()->json(compact('message', 'article'), $status);
     }
-
 
 }

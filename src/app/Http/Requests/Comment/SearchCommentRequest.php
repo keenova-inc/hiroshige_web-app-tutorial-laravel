@@ -10,7 +10,6 @@ use Illuminate\Http\Response;
 use App\Rules\Page;
 use Illuminate\Contracts\Validation\Validator;
 
-
 class SearchCommentRequest extends FormRequest
 {
     /**
@@ -30,7 +29,7 @@ class SearchCommentRequest extends FormRequest
     {
         return [
             'page' => [new Page],
-            'id' => ['integer', new FindRecord(new Article)],
+            'id' => [new FindRecord(new Article, trans('validation.attributes.article'))],
         ];
     }
 
@@ -41,10 +40,14 @@ class SearchCommentRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(
-            response(['message' => $validator->errors()],
-                Response::HTTP_BAD_REQUEST),
-        );
+        if($validator->errors()->has('page')) {
+            abort(Response::HTTP_BAD_REQUEST,
+            $validator->errors()->get('page')[0]);
+
+        } elseif($validator->errors()->has('id')) {
+            abort(Response::HTTP_NOT_FOUND,
+            $validator->errors()->get('id')[0]);
+        }
     }
 
 

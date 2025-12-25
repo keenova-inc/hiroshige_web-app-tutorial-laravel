@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Article extends Model
 {
@@ -14,7 +14,10 @@ class Article extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'title', 'content', 'username',
+        'title',
+        'content',
+        'user_id',
+        'username',
     ];
 
     protected static function boot()
@@ -23,6 +26,11 @@ class Article extends Model
         static::deleting(function (Article $article) {
             $article->comments()->delete();
         });
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function comments(): HasMany

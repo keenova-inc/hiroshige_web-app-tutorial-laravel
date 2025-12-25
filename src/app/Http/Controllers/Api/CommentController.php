@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Article;
-use Illuminate\Http\Request;
-use App\Http\Requests\Comment\{CreateCommentRequest, FindCommentRequest, UpdateCommentRequest};
+use App\Http\Requests\Comment\{CreateCommentRequest, FindCommentRequest,
+    UpdateCommentRequest, DeleteCommentRequest};
 use App\Services\CommentService;
 use Illuminate\Http\Response;
 use App\Http\Requests\Comment\SearchCommentRequest;
@@ -23,7 +22,9 @@ class CommentController extends Controller
     }
 
     /**
-     * コメント一覧取得
+     * 記事のコメント一覧を取得
+     * @param SearchCommentRequest $request
+     * @return JsonResponse
      */
     public function index(SearchCommentRequest $request): JsonResponse
     {
@@ -37,25 +38,35 @@ class CommentController extends Controller
     }
 
     /**
-     * コメント詳細
+     * 記事のコメントを取得
+     * @param FindCommentRequest $request
+     * @return JsonResponse
      */
     public function show(FindCommentRequest $request): JsonResponse
     {
-        $data = $this->commentSvc->show($request->validated());
+        $validatedData = $request->validated();
+
+        $data = $this->commentSvc->show($validatedData);
         $comment = $data['comment'];
         $status = $data['status'] ?? Response::HTTP_OK;
+        $attribute = __('validation.attributes.message');
+        $message = is_null($comment) ? __('api.not_exist',
+        ['id' => $validatedData['comment_id'], 'attribute' => $attribute]) : '';
 
-        return response()->json(compact('comment'), $status);
+        return response()->json(compact('comment', 'message'), $status);
     }
 
     /**
-     * コメント登録
+     * 記事のコメントを作成
+     * @param CreateCommentRequest $request
+     * @return JsonResponse
      */
     public function create(CreateCommentRequest $request): JsonResponse
     {
+        $validatedData = $request->validated();
+        $validatedData['user_id'] = $request->user()->id;
         // \Log::debug(print_r($request->validated(), true));
-
-        $data = $this->commentSvc->create($request->validated());
+        $data = $this->commentSvc->create($validatedData);
         $comment = $data['comment'];
         $status = $data['status'] ?? Response::HTTP_CREATED;
         $attribute = __('validation.attributes.message');
@@ -66,7 +77,9 @@ class CommentController extends Controller
     }
 
     /**
-     * コメント更新
+     * 記事のコメントを更新
+     * @param UpdateCommentRequest $request
+     * @return JsonResponse
      */
     public function update(UpdateCommentRequest $request): JsonResponse
     {
@@ -82,9 +95,11 @@ class CommentController extends Controller
     }
 
     /**
-     * コメント削除
+     * 記事のコメントを削除
+     * @param FindCommentRequest $request
+     * @return JsonResponse
      */
-    public function delete(FindCommentRequest $request): JsonResponse
+    public function delete(DeleteCommentRequest $request): JsonResponse
     {
         $validatedData = $request->validated();
 

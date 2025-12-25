@@ -20,6 +20,11 @@ class UserController extends Controller
         $this->userSvc = $createNewUser;
     }
 
+    /**
+     * ユーザ登録
+     * @param Request $request
+     * @return JsonResponse
+     */
     function create(Request $request): JsonResponse
     {
         $params = $request->all();

@@ -1,30 +1,26 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Requests\Comment;
+namespace App\Http\Requests\Article;
 
+use App\Models\Article;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Rules\Comment\CommentMessage;
-use App\Models\Comment;
 use Illuminate\Http\Response;
 
-class UpdateCommentRequest extends FormRequest
+class DeleteArticleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        $commentId = $this->comment_id;
         $articleId = $this->id;
-        $comment = Comment::where('id', $commentId)
-            ->where('article_id', $articleId)->first();
-
-        if(is_null($comment)) {
+        $article = Article::find($articleId);
+        if(is_null($article)) {
             abort(Response::HTTP_NOT_FOUND, trans('api.not_exist',
-            ['id' => $commentId, 'attribute' => __('validation.attributes.message')]));
+            ['id' => $articleId, 'attribute' => __('validation.attributes.article')]));
         }
 
-        return $this->user()->id === $comment->user_id;
+        return $this->user()->id === $article->user_id;
     }
 
     /**
@@ -35,23 +31,18 @@ class UpdateCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'message' => ['required', new CommentMessage],
             'id' => [],
-            'comment_id' => [],
         ];
     }
 
     public function prepareForValidation()
     {
         $this->merge(['id' => $this->route('id')]);
-        $this->merge(['comment_id' => $this->route('comment_id')]);
     }
 
     protected function failedAuthorization()
     {
         abort(Response::HTTP_FORBIDDEN,
-        trans('api.not_authorized', ['id' => $this->route('comment_id')]));
+        trans('api.not_authorized', ['id' => $this->route('id')]));
     }
-
-
 }

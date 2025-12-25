@@ -25,7 +25,6 @@ class CreateArticleRequest extends FormRequest
         return [
             'title' => ['required', new ArticleTitle],
             'content' => ['required'],
-            'username' => ['required', new ArticleUserName],
         ];
     }
 }

@@ -6,6 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\Comment\CommentMessage;
 use App\Rules\FindRecord;
 use App\Models\Article;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Response;
 
 class CreateCommentRequest extends FormRequest
 {
@@ -26,13 +28,21 @@ class CreateCommentRequest extends FormRequest
     {
         return [
             'message' => ['required', new CommentMessage()],
-            'id' => ['integer', new FindRecord(new Article)],
+            'id' => [new FindRecord(new Article, trans('validation.attributes.article'))],
         ];
     }
 
     public function prepareForValidation()
     {
         $this->merge(['id' => $this->route('id')]);
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        if($validator->errors()->has('id')) {
+            abort(Response::HTTP_NOT_FOUND,
+            $validator->errors()->get('id')[0]);
+        }
     }
 
 }
