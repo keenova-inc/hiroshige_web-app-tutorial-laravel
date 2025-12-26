@@ -1,8 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\{ArticleController, CommentController,
-    GreetingController, UserController};
-use Illuminate\Http\Request;
+    UserController};
 use Illuminate\Support\Facades\Route;
 
 /**

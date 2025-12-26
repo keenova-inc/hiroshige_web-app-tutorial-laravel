@@ -20,6 +20,12 @@ class Article extends Model
         'username',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
     protected static function boot()
     {
         parent::boot();

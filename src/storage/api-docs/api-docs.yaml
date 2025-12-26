@@ -1,0 +1,351 @@
+openapi: 3.0.0 #←TODO: 確認
+info:
+  title: ローカルでのAPIテスト用
+  description: ローカルでのAPIテスト用
+  version: 1.0.0
+
+paths:
+  /api/articles:
+    get:
+      tags:
+        - Articles
+      summary: 記事一覧を取得
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Article'
+                  # message:
+                  #   type: string #TODO
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    description: 記事データ
+                    enum: [null]
+
+    post:
+      tags:
+        - Articles
+      summary: 記事を作成
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArticleRequest'
+
+      responses:
+        '201':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleSuccessJson'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleFailedJson'
+
+  /api/articles/{id}:
+    get:
+      tags:
+        - Articles
+      summary: 記事を取得
+      parameters:
+        - $ref: '#/components/parameters/ArticleId'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleSuccessJson'
+        '404':
+          description: データ無し
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleFailedJson'
+    put:
+      tags:
+        - Articles
+      summary: 記事を更新
+      parameters:
+        - $ref: '#/components/parameters/ArticleId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArticleRequest'
+
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleSuccessJson'
+        '401':
+          description: 権限なし（未ログイン）
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleFailedJson'
+        '403':
+          description: 権限なし（不正なユーザ）
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleFailedJson'
+        '404':
+          description: データ無し
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleFailedJson'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleFailedJson'
+
+    delete:
+      tags:
+        - Articles
+      summary: 記事を削除
+      parameters:
+        - $ref: '#/components/parameters/ArticleId'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    description: 成功メッセージ
+                    type: string
+        '401':
+          description: 権限なし（未ログイン）
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleFailedJson'
+        '403':
+          description: 権限なし（不正なユーザ）
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleFailedJson'
+        '404':
+          description: データ無し
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleFailedJson'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleFailedJson'
+
+  /api/articles/{id}/likes:
+    post:
+      tags:
+        - Articles
+      summary: 記事に「いいね」をする
+      parameters:
+        - $ref: '#/components/parameters/ArticleId'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleSuccessJson'
+        '404':
+          description: データ無し
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleFailedJson'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleFailedJson'
+
+
+  /api/articles/{id}/comments:
+    get:
+      tags:
+        - Comments
+      summary: 記事のコメント一覧を取得
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/ArticleId'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Comment' # TODO
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentFailedJson'
+
+  /api/articles/{id}/comments/{comment_id}:
+    get:
+      tags:
+        - Comments
+      summary: 記事のコメントを取得
+      parameters:
+        - $ref: '#/components/parameters/CommentId'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentSuccessJson'
+        '404':
+          description: データ無し
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentFailedJson'
+
+
+components:
+  parameters:
+    ArticleId:
+      name: id
+      in: path
+      required: true
+      description: 記事ID
+      schema:
+        type: integer
+    CommentId:
+      name: comment_id
+      in: path
+      required: true
+      description: コメントID
+      schema:
+        type: integer
+    Page:
+      name: page
+      in: query
+      required: false
+      description: ページ番号
+      schema:
+        type: integer
+
+  schemas:
+    ArticleFailedJson:
+      type: object
+      properties:
+        message:
+          type: string
+          description: 失敗メッセージ
+        article:
+          description: 記事データ(なし)
+          enum: [null]
+    ArticleSuccessJson:
+      type: object
+      properties:
+        message:
+          description: 成功メッセージ
+          type: string
+        article:
+          description: 記事データ
+          type: object
+          $ref: '#/components/schemas/Article'
+    CommentFailedJson:
+      type: object
+      properties:
+        message:
+          type: string
+          description: 失敗メッセージ
+        comment:
+          description: コメントデータ(なし)
+          enum: [null]
+    CommentSuccessJson:
+      type: object
+      properties:
+        message:
+          description: 成功メッセージ
+          type: string
+        comment:
+          description: コメントデータ
+          $ref: '#/components/schemas/Comment'
+
+
+
+
+    ArticleRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          required: true
+        content:
+          type: string
+          required: true
+
+    Article:
+      type: object
+      description: 記事データ
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        user_id:
+          type: integer
+        username:
+          type: string
+        like:
+          type: integer
+
+    Comment:
+      type: object
+      description: コメントデータ
+      properties:
+        id:
+          type: integer
+        article_id:
+          type: integer
+        message:
+          type: string
+        user_id:
+          type: integer
