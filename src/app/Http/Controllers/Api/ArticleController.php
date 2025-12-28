@@ -7,7 +7,6 @@ use App\Http\Requests\Article\{SearchArticleRequest, CreateArticleRequest,
     UpdateArticleRequest, FindArticleRequest, DeleteArticleRequest};
 use App\Services\ArticleService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class ArticleController extends Controller
@@ -33,8 +32,10 @@ class ArticleController extends Controller
         $data = $this->articleSvc->search((int)$page);
         $articles = $data['articles'];
         $status = $data['status'] ?? Response::HTTP_OK;
+        $message = trans('api.cant_get');
+        $resArray = is_null($articles) ? compact('message') : compact('articles');
 
-        return response()->json(compact('articles'), $status);
+        return response()->json($resArray, $status);
     }
 
     /**
@@ -49,8 +50,11 @@ class ArticleController extends Controller
         $data = $this->articleSvc->show($id);
         $article = $data['article'];
         $status = $data['status'] ?? Response::HTTP_OK;
+        $message = trans('api.not_exist',
+            ['id' => $id, 'attribute' => __('validation.attributes.article')]);
+        $resArray = is_null($article) ? compact('message') : compact('article');
 
-        return response()->json(compact('article'), $status);
+        return response()->json($resArray, $status);
     }
 
      /**
@@ -72,8 +76,9 @@ class ArticleController extends Controller
         $attribute = __('validation.attributes.article');
         $message = $article ? __('api.create.success', ['id' => $article->id, 'attribute' => $attribute])
             : __('api.create.fail', ['attribute' => $attribute]);
+        $resArray = is_null($article) ? compact('message') : compact('article', 'message');
 
-        return response()->json(compact('message', 'article'), $status);
+        return response()->json($resArray, $status);
     }
 
     /**
@@ -92,8 +97,9 @@ class ArticleController extends Controller
         $article = $data['article'];
         $status = $data['status'] ?? Response::HTTP_OK;
         $message = is_null($article) ? __('api.update.fail', ['id' => $id]) :  __('api.update.success', ['id' => $id]);
+        $resArray = is_null($article) ? compact('message') : compact('article', 'message');
 
-        return response()->json(compact('message', 'article'), $status);
+        return response()->json($resArray, $status);
     }
 
     /**
@@ -109,8 +115,9 @@ class ArticleController extends Controller
         $article = $data['article'];
         $status = $data['status'] ?? Response::HTTP_OK;
         $message = is_null($article) ? __('api.delete.fail', ['id' => $id]) : __('api.delete.success', ['id' => $id]);
+        $resArray = is_null($article) ? compact('message') : compact('article', 'message');
 
-        return response()->json(compact('message'), $status);
+        return response()->json($resArray, $status);
     }
 
     /**

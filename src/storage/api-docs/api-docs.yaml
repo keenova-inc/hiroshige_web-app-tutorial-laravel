@@ -5,6 +5,134 @@ info:
   version: 1.0.0
 
 paths:
+  /sanctum/csrf-cookie:
+    get:
+      tags:
+        - Auth
+      summary: CSRF tokenのCookieを取得
+      responses:
+        '204':
+          description: 成功
+          headers:
+            Set-Cookie:
+              $ref: '#/components/headers/LaravelSession'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+
+  /login:
+    post:
+      tags:
+        - Auth
+      summary: ログイン
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  $ref: '#/components/schemas/Email'
+                password:
+                  $ref: '#/components/schemas/Password'
+      responses:
+        '200':
+          description: 成功
+          headers:
+            Set-Cookie:
+              $ref: '#/components/headers/LaravelSession'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessJson'
+        '419':
+          description: CSRF Tokenエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+        '422':
+          description: バリデーションエラーまたは認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedValidation'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+
+  /logout:
+    post:
+      tags:
+        - Auth
+      summary: ログアウト
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessJson'
+        '419':
+          description: セッションIDのCookie照合失敗時、またはCSRF Tokenエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+
+  /api/users:
+    post:
+      tags:
+        - Users
+      summary: ユーザを作成
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: '#/components/schemas/Name'
+                email:
+                  $ref: '#/components/schemas/Email'
+                password:
+                  $ref: '#/components/schemas/Password'
+                password_confirmation:
+                  $ref: '#/components/schemas/PasswordConfirmation'
+      responses:
+        '201':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSuccessJson'
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedValidation'
+
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+
   /api/articles:
     get:
       tags:
@@ -20,22 +148,61 @@ paths:
               schema:
                 type: object
                 properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Article'
-                  # message:
-                  #   type: string #TODO
+                  articles:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 2
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Article'
+                      first_page_url:
+                        type: string
+                        example: http://localhost:3000/api/articles?page=1
+                      from:
+                        type: integer
+                        example: 3
+                      last_page:
+                        type: integer
+                        example: 10
+                      last_page_url:
+                        type: string
+                        example: http://localhost:3000/api/articles?page=10
+                      links:
+                        type: array
+                      next_page_url:
+                        type: string | null
+                        example: http://localhost:3000/api/articles?page=3
+                      path:
+                        type: string
+                        example: http://localhost:3000/api/articles
+                      per_page:
+                        type: integer
+                        example: 5
+                      prev_page_url:
+                        type: string
+                        example: http://localhost:3000/api/articles?page=1
+                      to:
+                        type: integer
+                        example: 4
+                      total:
+                        type: integer
+                        example: 20
+
+        '400':
+          description: 不正なリクエスト
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
         '500':
           description: サーバーエラー
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  articles:
-                    description: 記事データ
-                    enum: [null]
+                $ref: '#/components/schemas/FailedJson'
 
     post:
       tags:
@@ -46,7 +213,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ArticleRequest'
-
       responses:
         '201':
           description: 成功
@@ -54,12 +220,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ArticleSuccessJson'
+        '419':
+          description: セッションIDのCookie照合失敗時、またはCSRF Tokenエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedValidation'
         '500':
           description: サーバーエラー
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArticleFailedJson'
+                $ref: '#/components/schemas/FailedJson'
 
   /api/articles/{id}:
     get:
@@ -74,13 +252,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArticleSuccessJson'
+                type: object
+                properties:
+                  article:
+                    $ref: '#/components/schemas/ArticleComment'
         '404':
           description: データ無し
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArticleFailedJson'
+                $ref: '#/components/schemas/FailedJson'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+
     put:
       tags:
         - Articles
@@ -100,30 +288,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ArticleSuccessJson'
-        '401':
-          description: 権限なし（未ログイン）
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ArticleFailedJson'
         '403':
           description: 権限なし（不正なユーザ）
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArticleFailedJson'
+                $ref: '#/components/schemas/FailedJson'
         '404':
           description: データ無し
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArticleFailedJson'
-        '500':
-          description: サーバーエラー
+                $ref: '#/components/schemas/FailedJson'
+        '419':
+          description: セッションIDのCookie照合失敗時、またはCSRF Tokenエラー
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArticleFailedJson'
+                $ref: '#/components/schemas/FailedJson'
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedValidation'
+        '500':
+            description: サーバーエラー
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/FailedJson'
 
     delete:
       tags:
@@ -137,35 +331,31 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    description: 成功メッセージ
-                    type: string
-        '401':
-          description: 権限なし（未ログイン）
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ArticleFailedJson'
+                $ref: '#/components/schemas/ArticleSuccessJson'
         '403':
           description: 権限なし（不正なユーザ）
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArticleFailedJson'
+                $ref: '#/components/schemas/FailedJson'
         '404':
           description: データ無し
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArticleFailedJson'
+                $ref: '#/components/schemas/FailedJson'
+        '419':
+          description: セッションIDのCookie照合失敗時、またはCSRF Tokenエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
         '500':
           description: サーバーエラー
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArticleFailedJson'
+                $ref: '#/components/schemas/FailedJson'
 
   /api/articles/{id}/likes:
     post:
@@ -186,14 +376,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArticleFailedJson'
+                $ref: '#/components/schemas/FailedJson'
         '500':
           description: サーバーエラー
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArticleFailedJson'
-
+                $ref: '#/components/schemas/FailedJson'
 
   /api/articles/{id}/comments:
     get:
@@ -211,16 +400,110 @@ paths:
               schema:
                 type: object
                 properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Comment' # TODO
+                  comments:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 2
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Comment'
+                      first_page_url:
+                        type: string
+                        example: http://localhost:3000/api/articles/1/comments?page=1
+                      from:
+                        type: integer
+                        example: 3
+                      last_page:
+                        type: integer
+                        example: 10
+                      last_page_url:
+                        type: string
+                        example: http://localhost:3000/api/articles/1/comments?page=2
+                      links:
+                        type: array
+                      next_page_url:
+                        type: string | null
+                        example: null
+                      path:
+                        type: string
+                        example: http://localhost:3000/api/articles/1/comments
+                      per_page:
+                        type: integer
+                        example: 5
+                      prev_page_url:
+                        type: string
+                        example: http://localhost:3000/api/articles/1/comments?page=1
+                      to:
+                        type: integer
+                        example: 3
+                      total:
+                        type: integer
+                        example: 3
+        '400':
+          description: 不正なリクエスト
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+        '404':
+          description: データ無し
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
         '500':
           description: サーバーエラー
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CommentFailedJson'
+                $ref: '#/components/schemas/FailedJson'
+
+    post:
+      tags:
+        - Comments
+      summary: コメントを作成
+      parameters:
+        - $ref: '#/components/parameters/ArticleId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+      responses:
+        '201':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentSuccessJson'
+        # '401':
+        #   description: 権限なし（未ログイン）
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: '#/components/schemas/FailedJson'
+        '419':
+          description: セッションIDのCookie照合失敗時、またはCSRF Tokenエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedValidation'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+
 
   /api/articles/{id}/comments/{comment_id}:
     get:
@@ -228,6 +511,88 @@ paths:
         - Comments
       summary: 記事のコメントを取得
       parameters:
+        - $ref: '#/components/parameters/ArticleId'
+        - $ref: '#/components/parameters/CommentId'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comment:
+                    $ref: '#/components/schemas/CommentArticle'
+
+        '404':
+          description: データ無し
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+
+    put:
+      tags:
+        - Comments
+      summary: 記事のコメントを更新
+      parameters:
+        - $ref: '#/components/parameters/ArticleId'
+        - $ref: '#/components/parameters/CommentId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentSuccessJson'
+        '403':
+          description: 権限なし（不正なユーザ）
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+        '404':
+          description: データ無し
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+        '419':
+          description: セッションIDのCookie照合失敗時、またはCSRF Tokenエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedValidation'
+
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+    delete:
+      tags:
+        - Comments
+      summary: 記事のコメントを削除
+      parameters:
+        - $ref: '#/components/parameters/ArticleId'
         - $ref: '#/components/parameters/CommentId'
       responses:
         '200':
@@ -236,16 +601,70 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CommentSuccessJson'
+        '403':
+          description: 権限なし（不正なユーザ）
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
         '404':
           description: データ無し
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CommentFailedJson'
+                $ref: '#/components/schemas/FailedJson'
+        '419':
+          description: セッションIDのCookie照合失敗時、またはCSRF Tokenエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedJson'
 
+
+
+# 2. 全リクエストに適用
+security:
+  - CookieXsrfToken: []
 
 components:
+  securitySchemes:
+    CookieXsrfToken:
+      type: apiKey
+      in: header
+      deprecated: true
+      name: X-XSRF-TOKEN
+      description: "CookieのXSRF-TOKENの値を入力"
+  headers:
+    LaravelSession:
+      description: XSRF-TOKEN、laravel-sessionをセット
+      schema:
+        type: string
+        example: >
+          laravel-session=eyJpdiI6...;
+          expires=Sun, 28 Dec 2025 09:14:44 GMT; Max-Age=7199; path=/; httponly; samesite=lax
+          XSRF-TOKEN=eyJpdiI...; expires=Sun, 28 Dec 2025 09:14:44 GMT; Max-Age=7199; path=/; samesite=lax
+    # XsrfToken:
+    #   # name: XSRF-TOKEN
+    #   schema: string
+    #   example: XSRF-TOKEN=eY...
+
+
   parameters:
+    CookieXsrfToken:
+      name: X-XSRF-TOKEN
+      type: apiKey
+      in: header
+      deprecated: true
+      description: "CookieのXSRF-TOKENの値を入力"
+      schema:
+        type: integer
+
     ArticleId:
       name: id
       in: path
@@ -253,13 +672,15 @@ components:
       description: 記事ID
       schema:
         type: integer
+      example: 2
     CommentId:
-      name: comment_id
       in: path
+      name: comment_id
       required: true
       description: コメントID
       schema:
         type: integer
+      example: 4
     Page:
       name: page
       in: query
@@ -267,58 +688,39 @@ components:
       description: ページ番号
       schema:
         type: integer
+        default: 1
 
   schemas:
-    ArticleFailedJson:
-      type: object
-      properties:
-        message:
-          type: string
-          description: 失敗メッセージ
-        article:
-          description: 記事データ(なし)
-          enum: [null]
-    ArticleSuccessJson:
-      type: object
-      properties:
-        message:
-          description: 成功メッセージ
-          type: string
-        article:
-          description: 記事データ
-          type: object
-          $ref: '#/components/schemas/Article'
-    CommentFailedJson:
-      type: object
-      properties:
-        message:
-          type: string
-          description: 失敗メッセージ
-        comment:
-          description: コメントデータ(なし)
-          enum: [null]
-    CommentSuccessJson:
-      type: object
-      properties:
-        message:
-          description: 成功メッセージ
-          type: string
-        comment:
-          description: コメントデータ
-          $ref: '#/components/schemas/Comment'
-
-
-
-
+  # 記事用スキーマ
     ArticleRequest:
       type: object
       properties:
         title:
           type: string
           required: true
+          example: 記事のタイトル
         content:
           type: string
           required: true
+          example: 記事の内容
+    ArticleSuccessJson:
+      type: object
+      properties:
+        article:
+          description: 記事データ
+          type: object
+          $ref: '#/components/schemas/Article'
+        message:
+          description: 成功メッセージ
+          type: string
+          example: 成功しました
+    ArticleCommentSuccessJson:
+      type: object
+      properties:
+        article:
+          description: 記事とコメントデータ
+          type: object
+          $ref: '#/components/schemas/ArticleComment'
 
     Article:
       type: object
@@ -336,10 +738,122 @@ components:
           type: string
         like:
           type: integer
+      example: {
+        id: 1,
+        title: 記事のタイトル,
+        content: 記事の内容,
+        user_id: 3,
+        username: 記事の著者名,
+        like: 0
+      }
 
+    ArticleComment:
+      type: object
+      description: 記事とコメントデータ
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        user_id:
+          type: integer
+        username:
+          type: string
+        like:
+          type: integer
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+      example: {
+        id: 1,
+        title: 記事のタイトル,
+        content: 記事の内容,
+        user_id: 3,
+        username: 記事の著者名,
+        like: 2,
+        comments: [
+          {
+              "id": 2,
+              "article_id": 1,
+              "message": "記事へのコメント1",
+              "user_id": 5
+          },
+          {
+              "id": 7,
+              "article_id": 1,
+              "message": "記事へのコメント2",
+              "user_id": 4
+          }
+        ]
+      }
+
+  # コメント用スキーマ
+    CommentRequest:
+      type: object
+      properties:
+        message:
+          type: string
+          required: true
+          example: 記事へのコメント
+    CommentSuccessJson:
+      type: object
+      properties:
+        comment:
+          description: コメントデータ
+          $ref: '#/components/schemas/Comment'
+        message:
+          description: 成功メッセージ
+          type: string
+          example: 成功しました
+
+    CommentArticle:
+      type: object
+      description: コメントと記事データ
+      properties:
+        id:
+          type: integer
+          example: 2
+        article_id:
+          type: integer
+          example: 4
+        message:
+          type: string
+          example: 記事へのコメント
+        user_id:
+          type: 1
+        article:
+          $ref: '#/components/schemas/Article'
+
+  # ユーザスキーマ
+    Name:
+      required: true
+      description: メールアドレス
+      schema:
+        type: string
+      example: 結城
+    Email:
+      required: true
+      description: メールアドレス
+      schema:
+        type: string
+      example: yuki.nishinosono@example.com
+    Password:
+      required: true
+      description: パスワード
+      schema:
+        type: string
+      example: password
+    PasswordConfirmation:
+      required: true
+      description: パスワード(確認用)
+      schema:
+        type: string
+      example: password
     Comment:
       type: object
-      description: コメントデータ
       properties:
         id:
           type: integer
@@ -349,3 +863,73 @@ components:
           type: string
         user_id:
           type: integer
+      example: {
+        "id": 2,
+        "article_id": 1,
+        "message": "記事へのコメント1",
+        "user_id": 5
+      }
+
+    UserSuccessJson:
+      type: object
+      properties:
+        user:
+          description: ユーザデータ
+          $ref: '#/components/schemas/User'
+        message:
+          description: 成功メッセージ
+          type: string
+          example: 成功しました
+
+    User:
+      type: object
+      description: ユーザデータ
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+      example: {
+        id: 1,
+        name: 名前,
+        email: someone@example.com
+      }
+
+
+  # 共通スキーマ
+    SuccessJson:
+      type: object
+      properties:
+        message:
+          type: string
+          description: 成功メッセージ
+          example: 成功しました
+    FailedJson:
+      type: object
+      properties:
+        message:
+          type: string
+          description: 失敗メッセージ
+          example: 失敗しました
+    FailedValidation:
+      type: object
+      properties:
+        message:
+          type: string
+          description: 失敗メッセージ
+          example: エラーの項目名1は必須です
+        errors:
+          type: object
+          properties:
+            エラーの項目名1:
+              type: array
+              example: [
+                'エラー文1-1','エラー文1-2'
+              ]
+            エラーの項目名2:
+              type: array
+              example: [
+                'エラー文2-1','エラー文2-2'
+              ]

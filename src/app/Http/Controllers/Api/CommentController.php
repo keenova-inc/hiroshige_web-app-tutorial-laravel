@@ -29,12 +29,15 @@ class CommentController extends Controller
     public function index(SearchCommentRequest $request): JsonResponse
     {
         $validatedData = $request->validated();
+
         $validatedData['page'] = $validatedData['page'] ?? 1;
         $data = $this->commentSvc->search($validatedData);
         $comments = $data['comments'];
         $status = $data['status'] ?? Response::HTTP_OK;
+        $message = trans('api.cant_get');
+        $resArray = is_null($comments) ? compact('message') : compact('comments');
 
-        return response()->json(compact('comments'), $status);
+        return response()->json($resArray, $status);
     }
 
     /**
@@ -52,8 +55,9 @@ class CommentController extends Controller
         $attribute = __('validation.attributes.message');
         $message = is_null($comment) ? __('api.not_exist',
         ['id' => $validatedData['comment_id'], 'attribute' => $attribute]) : '';
+        $resArray = is_null($comment) ? compact('message') : compact('comment');
 
-        return response()->json(compact('comment', 'message'), $status);
+        return response()->json($resArray, $status);
     }
 
     /**
@@ -65,15 +69,16 @@ class CommentController extends Controller
     {
         $validatedData = $request->validated();
         $validatedData['user_id'] = $request->user()->id;
-        // \Log::debug(print_r($request->validated(), true));
+
         $data = $this->commentSvc->create($validatedData);
         $comment = $data['comment'];
         $status = $data['status'] ?? Response::HTTP_CREATED;
         $attribute = __('validation.attributes.message');
         $message = is_null($comment) ? __('api.create.fail', ['attribute' => $attribute])
         : __('api.create.success', ['id' => $comment->id, 'attribute' => $attribute]);
+        $resArray = is_null($comment) ? compact('message') : compact('comment', 'message');
 
-        return response()->json(compact('message', 'comment'), $status);
+        return response()->json($resArray, $status);
     }
 
     /**
@@ -90,8 +95,9 @@ class CommentController extends Controller
         $status = $data['status'] ?? Response::HTTP_OK;
         $message = is_null($comment) ?  __('api.update.fail', ['id' => $commentId])
         : __('api.update.success', ['id' => $commentId]);
+        $resArray = is_null($comment) ? compact('message') : compact('comment', 'message');
 
-        return response()->json(compact('message', 'comment'), $status);
+        return response()->json($resArray, $status);
     }
 
     /**
@@ -108,7 +114,8 @@ class CommentController extends Controller
         $status = $data['status'] ?? Response::HTTP_OK;
         $message = is_null($comment) ? __('api.delete.fail', ['id' => $validatedData['comment_id']])
         : __('api.delete.success', ['id' => $validatedData['comment_id']]);
+        $resArray = is_null($comment) ? compact('message') : compact('comment', 'message');
 
-        return response()->json(compact('message'), $status);
+        return response()->json($resArray, $status);
     }
 }

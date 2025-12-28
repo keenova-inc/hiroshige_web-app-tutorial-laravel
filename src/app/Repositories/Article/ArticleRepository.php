@@ -27,7 +27,8 @@ class ArticleRepository implements ArticleRepositoryInterface
 
     public function create(array $data): Article
     {
-        return Article::create($data);
+        $article = Article::create($data);
+        return $article->refresh();
     }
 
     public function update(array $data): ?Article

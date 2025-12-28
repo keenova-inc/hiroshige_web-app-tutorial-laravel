@@ -21,6 +21,7 @@ return [
     // ],
     'not_exist' => 'ID::id 存在しない:attributeです。',
     'not_authorized' => 'ID::id 許可がありません。',
+    'cant_get' => 'データ取得に失敗しました',
     'login' => [
         'fail' => "ログインに失敗しました。",
         'success' => "ログインに成功しました。",

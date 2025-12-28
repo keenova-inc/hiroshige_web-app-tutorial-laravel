@@ -44,7 +44,6 @@ class CommentRepository implements CommentRepositoryInterface
     public function update(array $data): ?Comment
     {
         // \Log::debug(print_r($data, true));
-
         $id = $data['id'];
         $commentId = $data['comment_id'];
 
