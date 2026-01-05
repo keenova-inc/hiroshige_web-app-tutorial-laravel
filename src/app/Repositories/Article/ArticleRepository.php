@@ -17,7 +17,7 @@ class ArticleRepository implements ArticleRepositoryInterface
 {
     public function search(int $page): LengthAwarePaginator
     {
-        return Article::paginate(CommonConst::PER_PAGE);
+        return Article::orderByRaw('created_at desc, id')->paginate(CommonConst::PER_PAGE);
     }
 
     public function find(int $id): ?Article

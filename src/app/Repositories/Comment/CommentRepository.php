@@ -14,7 +14,7 @@ class CommentRepository implements CommentRepositoryInterface
     public function search(array $data): LengthAwarePaginator
     {
         $page = $data['page'];
-        return Comment::where('article_id', $data['id'])->paginate(
+        return Comment::where('article_id', $data['id'])->orderByRaw('created_at desc, id asc')->paginate(
             CommonConst::PER_PAGE, ['*'], 'page', $page);
     }
 

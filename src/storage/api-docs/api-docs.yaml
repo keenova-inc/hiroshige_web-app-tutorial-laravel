@@ -668,27 +668,19 @@ components:
     ArticleId:
       name: id
       in: path
-      required: true
       description: 記事ID
-      schema:
-        type: integer
       example: 2
     CommentId:
-      in: path
       name: comment_id
-      required: true
+      in: path
       description: コメントID
-      schema:
-        type: integer
       example: 4
     Page:
       name: page
       in: query
       required: false
       description: ページ番号
-      schema:
-        type: integer
-        default: 1
+      example: 1
 
   schemas:
   # 記事用スキーマ

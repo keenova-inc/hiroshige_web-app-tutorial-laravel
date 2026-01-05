@@ -2,5 +2,5 @@
 namespace App\Consts;
 
 class CommonConst {
-    const PER_PAGE = 2;
+    const PER_PAGE = 5;
 }
