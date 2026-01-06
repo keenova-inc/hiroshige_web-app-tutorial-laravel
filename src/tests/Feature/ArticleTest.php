@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use App\Consts\CommonConst;
 use App\Models\{Article, Comment, User};

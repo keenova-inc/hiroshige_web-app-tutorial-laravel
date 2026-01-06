@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Article;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Rules\Article\{ArticleTitle, ArticleUserName};
+use App\Rules\Article\ArticleTitle;
 
 class CreateArticleRequest extends FormRequest
 {
