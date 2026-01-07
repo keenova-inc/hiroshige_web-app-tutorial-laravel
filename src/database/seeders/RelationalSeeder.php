@@ -18,6 +18,13 @@ class RelationalSeeder extends Seeder
         Article::truncate();
         User::truncate();
 
+        // テストユーザ作成
+        User::create([
+            'name' => '田中太郎',
+            'email' => 'taro@example.com',
+            'password' => 'password',
+        ]);
+
         // ユーザとその記事を作成
         User::factory()->count(2)
         ->has(Article::factory()->count(2)

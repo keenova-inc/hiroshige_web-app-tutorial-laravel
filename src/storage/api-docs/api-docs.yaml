@@ -1,4 +1,4 @@
-openapi: 3.0.0 #←TODO: 確認
+openapi: 3.1.0
 info:
   title: ローカルでのAPIテスト用
   description: ローカルでのAPIテスト用
@@ -649,11 +649,6 @@ components:
           laravel-session=eyJpdiI6...;
           expires=Sun, 28 Dec 2025 09:14:44 GMT; Max-Age=7199; path=/; httponly; samesite=lax
           XSRF-TOKEN=eyJpdiI...; expires=Sun, 28 Dec 2025 09:14:44 GMT; Max-Age=7199; path=/; samesite=lax
-    # XsrfToken:
-    #   # name: XSRF-TOKEN
-    #   schema: string
-    #   example: XSRF-TOKEN=eY...
-
 
   parameters:
     CookieXsrfToken:
@@ -831,7 +826,7 @@ components:
       description: メールアドレス
       schema:
         type: string
-      example: yuki.nishinosono@example.com
+      example: taro@example.com
     Password:
       required: true
       description: パスワード
