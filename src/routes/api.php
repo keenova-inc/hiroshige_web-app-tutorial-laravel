@@ -27,6 +27,6 @@ Route::prefix('/articles')->group(function () {
 });
 
 // ユーザー
-    Route::prefix('/users')->group(function () {
-        Route::post('/', [UserController::class, 'create']);
-    });
+Route::prefix('/users')->group(function () {
+    Route::post('/', [UserController::class, 'create']);
+});

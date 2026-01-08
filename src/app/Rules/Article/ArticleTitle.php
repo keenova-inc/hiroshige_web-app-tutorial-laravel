@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Rules\Article;
 
@@ -16,8 +18,10 @@ class ArticleTitle implements ValidationRule
     {
         $maxCount = 255;
         if (!is_string($value) || mb_strlen($value) > $maxCount) {
-            $fail(__('validation.max.string',
-            ['attribute' => __('validation.attributes.title'), 'max' => $maxCount]));
+            $fail(__(
+                'validation.max.string',
+                ['attribute' => __('validation.attributes.title'), 'max' => $maxCount]
+            ));
         }
     }
 }

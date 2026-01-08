@@ -1,6 +1,8 @@
 <?php
+
 namespace App\Consts;
 
-class CommonConst {
-    const PER_PAGE = 5;
+class CommonConst
+{
+    public const PER_PAGE = 5;
 }

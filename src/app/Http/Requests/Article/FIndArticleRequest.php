@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Requests\Article;
 
@@ -27,7 +29,7 @@ class FindArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => [new FindRecord(new Article, trans('validation.attributes.article'))],
+            'id' => [new FindRecord(new Article(), trans('validation.attributes.article'))],
         ];
     }
 
@@ -39,8 +41,10 @@ class FindArticleRequest extends FormRequest
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
-            response(['message' => $validator->errors()->get('id')[0]],
-                Response::HTTP_NOT_FOUND),
+            response(
+                ['message' => $validator->errors()->get('id')[0]],
+                Response::HTTP_NOT_FOUND
+            ),
         );
     }
 

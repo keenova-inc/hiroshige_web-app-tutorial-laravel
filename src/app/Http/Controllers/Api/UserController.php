@@ -1,8 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Actions\Fortify\CreateNewUser;
 use Exception;
@@ -16,8 +17,7 @@ class UserController extends Controller
 
     public function __construct(
         CreateNewUser $createNewUser
-    )
-    {
+    ) {
         $this->userSvc = $createNewUser;
     }
 
@@ -26,13 +26,13 @@ class UserController extends Controller
      * @param CreateUserRequest $request
      * @return JsonResponse
      */
-    function create(CreateUserRequest $request): JsonResponse
+    public function create(CreateUserRequest $request): JsonResponse
     {
         $params = $request->all();
 
         try {
             $user = $this->userSvc->create($params);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $user = null;
         }
 

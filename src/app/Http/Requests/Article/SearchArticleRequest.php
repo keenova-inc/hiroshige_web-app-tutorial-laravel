@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Requests\Article;
 
@@ -26,7 +28,7 @@ class SearchArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'page' => [new Page],
+            'page' => [new Page()],
         ];
     }
 
@@ -37,10 +39,12 @@ class SearchArticleRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-        if($validator->errors()->has('page')) {
+        if ($validator->errors()->has('page')) {
             throw new HttpResponseException(
-                response(['message' => $validator->errors()->get('page')[0]],
-                    Response::HTTP_BAD_REQUEST),
+                response(
+                    ['message' => $validator->errors()->get('page')[0]],
+                    Response::HTTP_BAD_REQUEST
+                ),
             );
         }
     }

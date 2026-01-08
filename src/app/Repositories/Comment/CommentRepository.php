@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Repositories\Comment;
 
@@ -7,7 +9,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use App\Consts\CommonConst;
 use Exception;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CommentRepository implements CommentRepositoryInterface
 {
@@ -15,7 +16,11 @@ class CommentRepository implements CommentRepositoryInterface
     {
         $page = $data['page'];
         return Comment::where('article_id', $data['id'])->orderByRaw('created_at desc, id asc')->paginate(
-            CommonConst::PER_PAGE, ['*'], 'page', $page);
+            CommonConst::PER_PAGE,
+            ['*'],
+            'page',
+            $page
+        );
     }
 
     public function find($data): ?Comment
@@ -34,7 +39,7 @@ class CommentRepository implements CommentRepositoryInterface
         unset($data['id']);
 
         $article = Article::find($articleId);
-        if(is_null($article)) {
+        if (is_null($article)) {
             return null;
         }
 
@@ -49,14 +54,14 @@ class CommentRepository implements CommentRepositoryInterface
 
         $comment = Comment::where('article_id', $id)
         ->where('id', $commentId)->first();
-        if(is_null($comment)) {
+        if (is_null($comment)) {
             return null;
         }
 
         // 更新
         $result = $comment->update($data);
         // 更新失敗
-        if($result === 0) {
+        if ($result === 0) {
             throw new Exception(__('api.update.not_execute', compact('id')));
         }
 
@@ -65,18 +70,18 @@ class CommentRepository implements CommentRepositoryInterface
 
     public function delete(array $data): ?Comment
     {
-        return DB::transaction(function() use($data) {
+        return DB::transaction(function () use ($data) {
             $comment = Comment::where('id', $data['comment_id'])
             ->where('article_id', $data['id'])
             ->first();
 
-            if(is_null($comment)) {
+            if (is_null($comment)) {
                 return null;
             }
 
             $result = $comment->delete();
             // 削除失敗
-            if($result === 0) {
+            if ($result === 0) {
                 throw new Exception(__('api.delete.not_execute', compact('id')));
             }
             return $comment->fresh();

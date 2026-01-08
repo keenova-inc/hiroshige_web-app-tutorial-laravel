@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Rules\Comment;
 
@@ -16,8 +18,10 @@ class CommentMessage implements ValidationRule
     {
         $maxCount = 500;
         if (!is_string($value) || mb_strlen($value) > $maxCount) {
-            $fail(__('validation.max.string',
-            ['attribute' => __('validation.attributes.message'), 'max' => $maxCount]));
+            $fail(__(
+                'validation.max.string',
+                ['attribute' => __('validation.attributes.message'), 'max' => $maxCount]
+            ));
         }
     }
 }

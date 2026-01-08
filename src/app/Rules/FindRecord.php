@@ -26,8 +26,9 @@ class FindRecord implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $record = $this->model::find((int)$value);
-        if(is_null($record)) {
-            abort(Response::HTTP_NOT_FOUND,
+        if (is_null($record)) {
+            abort(
+                Response::HTTP_NOT_FOUND,
                 trans('api.not_exist', ['id' => $value, 'attribute' => $this->name])
             );
         }

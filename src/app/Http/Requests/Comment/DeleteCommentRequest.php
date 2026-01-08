@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Requests\Comment;
 
@@ -18,9 +20,11 @@ class DeleteCommentRequest extends FormRequest
         $comment = Comment::where('id', $commentId)
             ->where('article_id', $articleId)->first();
 
-        if(is_null($comment)) {
-            abort(Response::HTTP_NOT_FOUND, trans('api.not_exist',
-            ['id' => $commentId, 'attribute' => __('validation.attributes.message')]));
+        if (is_null($comment)) {
+            abort(Response::HTTP_NOT_FOUND, trans(
+                'api.not_exist',
+                ['id' => $commentId, 'attribute' => __('validation.attributes.message')]
+            ));
         }
 
         return $this->user()->id === $comment->user_id;
@@ -47,8 +51,10 @@ class DeleteCommentRequest extends FormRequest
 
     protected function failedAuthorization()
     {
-        abort(Response::HTTP_FORBIDDEN,
-        trans('api.not_authorized', ['id' => $this->route('comment_id')]));
+        abort(
+            Response::HTTP_FORBIDDEN,
+            trans('api.not_authorized', ['id' => $this->route('comment_id')])
+        );
     }
 
 }

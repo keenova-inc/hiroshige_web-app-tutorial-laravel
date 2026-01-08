@@ -1,6 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Repositories\Comment;
+
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Comment;
 

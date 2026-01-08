@@ -23,7 +23,7 @@ class FortifyServiceProvider extends ServiceProvider
     public function register(): void
     {
         // ログイン時API tokenを返却
-        $this->app->instance(LoginResponse::class, new class implements LoginResponse {
+        $this->app->instance(LoginResponse::class, new class () implements LoginResponse {
             public function toResponse($request)
             {
                 return response()->json([
@@ -33,7 +33,7 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         // ログアウト後API tokenを返却
-        $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
+        $this->app->instance(LogoutResponse::class, new class () implements LogoutResponse {
             public function toResponse($request)
             {
                 return response()->json([

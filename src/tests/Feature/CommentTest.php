@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use App\Consts\CommonConst;
 use App\Models\{Article, Comment, User};
 use Mockery\MockInterface;
 use App\Repositories\Comment\CommentRepositoryInterface;
-
 
 describe('記事のコメント一覧を取得', function () {
     it('正常完了', function () {
@@ -26,7 +27,7 @@ describe('記事のコメント一覧を取得', function () {
         ->assertOk()
         ->assertJson(['comments' => [
             'data' => [],
-            'total'=> 0
+            'total' => 0
         ]]);
     });
 
@@ -58,7 +59,7 @@ describe('記事のコメント一覧を取得', function () {
         ->assertStatus(400);
     });
 
-    it('存在しない記事IDが指定されたらステータス404で返す', function() {
+    it('存在しない記事IDが指定されたらステータス404で返す', function () {
         /** @var \Tests\TestCase $this */
         $this->getJson("api/articles/99999/comments?page=abc")
         ->assertStatus(404);
@@ -70,19 +71,19 @@ describe('記事のコメント一覧を取得', function () {
         /** @var \Tests\TestCase $this */
         $this->mock(CommentRepositoryInterface::class, function (MockInterface $mock) {
             $mock->shouldReceive('search')
-            ->andThrow(new Exception);
+            ->andThrow(new Exception());
         });
 
         $articleId = Article::first()->id;
         /** @var \Tests\TestCase $this */
         $this->getJson("api/articles/$articleId/comments?page=1")
         ->assertStatus(500)
-        ->assertJson(['message'=> trans('api.cant_get')]);
+        ->assertJson(['message' => trans('api.cant_get')]);
     });
 });
 
 describe('記事のコメントを取得', function () {
-    beforeEach(function() {
+    beforeEach(function () {
         Comment::factory()->withUserAndArticle(2, 1);
     });
 
@@ -98,7 +99,7 @@ describe('記事のコメントを取得', function () {
         ->assertJson(['comment' => ['id' => $commentId, 'article' => ['id' => $articleId]]]);
     });
 
-    it('存在しないコメントIDが指定されたらステータス404で返す', function() {
+    it('存在しないコメントIDが指定されたらステータス404で返す', function () {
         /** @var \Tests\TestCase $this */
         $this->getJson('api/articles/99999/comments/99999')
         ->assertStatus(404);
@@ -112,19 +113,20 @@ describe('記事のコメントを取得', function () {
         /** @var \Tests\TestCase $this */
         $this->mock(CommentRepositoryInterface::class, function (MockInterface $mock) {
             $mock->shouldReceive('find')
-            ->andThrow(new Exception);
+            ->andThrow(new Exception());
         });
 
         $this->getJson("api/articles/$articleId/comments/$commentId")
         ->assertStatus(500)
-        ->assertJson(['message'=> trans('api.not_exist',
+        ->assertJson(['message' => trans(
+            'api.not_exist',
             ['id' => $articleId, 'attribute' => __('validation.attributes.message')]
         )]);
     });
 });
 
 describe('記事のコメントを作成', function () {
-    beforeEach(function() {
+    beforeEach(function () {
         Article::factory()->withUser(1);
     });
 
@@ -144,7 +146,7 @@ describe('記事のコメントを作成', function () {
         $this->assertDatabaseHas('comments', $mergedArray);
     });
 
-    it('未ログインの場合ステータス401で返す', function () use($createArray) {
+    it('未ログインの場合ステータス401で返す', function () use ($createArray) {
         $articleId = Article::first()->id;
         /** @var \Tests\TestCase $this */
         $this->postJson("api/articles/{$articleId}/comments", $createArray)
@@ -154,10 +156,10 @@ describe('記事のコメントを作成', function () {
     it('コメントが空の場合422で返す', function () {
         $articleId = Article::first()->id;
         $user = User::first();
-         /** @var \Tests\TestCase $this */
-       $this->actingAs($user)
-        ->postJson("api/articles/{$articleId}/comments", [])
-        ->assertStatus(422);
+        /** @var \Tests\TestCase $this */
+        $this->actingAs($user)
+         ->postJson("api/articles/{$articleId}/comments", [])
+         ->assertStatus(422);
     });
 
     it('例外が発生した場合ステータス500で返す', function () use ($createArray) {
@@ -166,30 +168,32 @@ describe('記事のコメントを作成', function () {
         /** @var \Tests\TestCase $this */
         $this->mock(CommentRepositoryInterface::class, function (MockInterface $mock) {
             $mock->shouldReceive('create')
-            ->andThrow(new Exception);
+            ->andThrow(new Exception());
         });
 
-       $this->actingAs(User::first())
-        ->postJson("api/articles/{$articleId}/comments", $createArray)
-        ->assertStatus(500);
+        $this->actingAs(User::first())
+         ->postJson("api/articles/{$articleId}/comments", $createArray)
+         ->assertStatus(500);
     });
 });
 
-describe('記事のコメントを更新', function() {
-    beforeEach(function() {
+describe('記事のコメントを更新', function () {
+    beforeEach(function () {
         Comment::factory()->withUserAndArticle(2, 1);
     });
 
     $updateArray = ['message' => '記事へのコメント（更新後）'];
 
-    it('正常完了', function () use($updateArray) {
+    it('正常完了', function () use ($updateArray) {
         $comment = Comment::first();
         $user = User::find($comment->user_id);
 
         /** @var \Tests\TestCase $this */
         $response = $this->actingAs($user)
-        ->putJson("api/articles/{$comment->article_id}/comments/{$comment->id}",
-        $updateArray);
+        ->putJson(
+            "api/articles/{$comment->article_id}/comments/{$comment->id}",
+            $updateArray
+        );
 
         // Log::debug(print_r($response->json(), true));
         $mergedArray = array_merge($updateArray, [
@@ -202,7 +206,7 @@ describe('記事のコメントを更新', function() {
         $this->assertDatabaseHas('comments', $mergedArray);
     });
 
-    it('存在しないコメントIDが指定された場合ステータス404で返す', function()  use($updateArray){
+    it('存在しないコメントIDが指定された場合ステータス404で返す', function () use ($updateArray) {
         $comment = Comment::first();
         $user = User::find($comment->user_id);
         /** @var \Tests\TestCase $this */
@@ -211,7 +215,7 @@ describe('記事のコメントを更新', function() {
         ->assertStatus(404);
     });
 
-    it('未ログインの場合ステータス401で返す', function () use($updateArray) {
+    it('未ログインの場合ステータス401で返す', function () use ($updateArray) {
         $comment = Comment::first();
         $commentId = $comment->id;
         $articleId = $comment->article_id;
@@ -238,10 +242,10 @@ describe('記事のコメントを更新', function() {
         $articleId = $comment->article_id;
         $user = User::find($comment->user_id);
 
-         /** @var \Tests\TestCase $this */
-       $this->actingAs($user)
-        ->putJson("api/articles/$articleId/comments/$commentId", [])
-        ->assertStatus(422);
+        /** @var \Tests\TestCase $this */
+        $this->actingAs($user)
+         ->putJson("api/articles/$articleId/comments/$commentId", [])
+         ->assertStatus(422);
     });
 
     it('例外が発生した場合ステータス500で返す', function () use ($updateArray) {
@@ -253,17 +257,17 @@ describe('記事のコメントを更新', function() {
         /** @var \Tests\TestCase $this */
         $this->mock(CommentRepositoryInterface::class, function (MockInterface $mock) {
             $mock->shouldReceive('update')
-            ->andThrow(new Exception);
+            ->andThrow(new Exception());
         });
 
-       $this->actingAs($user)
-        ->putJson("api/articles/$articleId/comments/$commentId", $updateArray)
-        ->assertStatus(500);
+        $this->actingAs($user)
+         ->putJson("api/articles/$articleId/comments/$commentId", $updateArray)
+         ->assertStatus(500);
     });
 });
 
-describe('記事のコメントを削除', function(){
-    beforeEach(function() {
+describe('記事のコメントを削除', function () {
+    beforeEach(function () {
         Comment::factory()->withUserAndArticle(2, 1);
     });
 
@@ -302,7 +306,7 @@ describe('記事のコメントを削除', function(){
             ->assertStatus(403);
     });
 
-    it('存在しないコメントIDが指定された場合ステータス404で返す', function() {
+    it('存在しないコメントIDが指定された場合ステータス404で返す', function () {
         $comment = Comment::first();
         $commentId = $comment->id;
         $articleId = $comment->article_id;
@@ -324,13 +328,11 @@ describe('記事のコメントを削除', function(){
         /** @var \Tests\TestCase $this */
         $this->mock(CommentRepositoryInterface::class, function (MockInterface $mock) {
             $mock->shouldReceive('delete')
-            ->andThrow(new Exception);
+            ->andThrow(new Exception());
         });
 
-       $this->actingAs($user)
-        ->deleteJson("api/articles/$articleId/comments/$commentId")
-        ->assertStatus(500);
+        $this->actingAs($user)
+         ->deleteJson("api/articles/$articleId/comments/$commentId")
+         ->assertStatus(500);
     })->group('testB');
 });
-
-

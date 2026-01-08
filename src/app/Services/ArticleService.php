@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Services;
 
@@ -9,7 +11,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use App\Util\HandleException;
 
-class ArticleService {
+class ArticleService
+{
     private $articleRepo;
 
     public function __construct(
@@ -28,44 +31,46 @@ class ArticleService {
         try {
             $articles = $this->articleRepo->search($page);
             return ['articles' => $articles];
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
             return ['status' => Response::HTTP_INTERNAL_SERVER_ERROR, 'articles' => null];
         }
     }
 
-     /**
-     * 記事を取得
-     * @param int $id
-     * @return array
-     */
+    /**
+    * 記事を取得
+    * @param int $id
+    * @return array
+    */
     public function show(int $id): array
     {
         try {
             $article = $this->articleRepo->find($id);
-            if(is_null($article)) {
-                throw new ModelNotFoundException(__('api.not_exist',
-                ['id' => $id, 'attribute' => __('validation.attributes.article')]));
+            if (is_null($article)) {
+                throw new ModelNotFoundException(__(
+                    'api.not_exist',
+                    ['id' => $id, 'attribute' => __('validation.attributes.article')]
+                ));
             }
 
             return ['article' => $article];
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
             return ['status' => HandleException::decideStatus($e), 'article' => null];
         }
     }
 
-     /**
-     * 記事作成
-     * @param array $data
-     * @return array
-     */
+    /**
+    * 記事作成
+    * @param array $data
+    * @return array
+    */
     public function create(array $data): array
     {
         try {
             $article = $this->articleRepo->create($data);
             return ['article' => $article];
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
             return ['status' => Response::HTTP_INTERNAL_SERVER_ERROR, 'article' => null];
         }
@@ -80,13 +85,15 @@ class ArticleService {
     {
         try {
             $article = $this->articleRepo->update($data);
-            if(is_null($article)) {
-                throw new ModelNotFoundException(__('api.not_exist',
-                ['id' => $data['id'], 'attribute' => __('validation.attributes.article')]));
+            if (is_null($article)) {
+                throw new ModelNotFoundException(__(
+                    'api.not_exist',
+                    ['id' => $data['id'], 'attribute' => __('validation.attributes.article')]
+                ));
             }
 
             return ['article' => $article];
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
             return ['status' => HandleException::decideStatus($e), 'article' => null];
         }
@@ -101,13 +108,15 @@ class ArticleService {
     {
         try {
             $article = $this->articleRepo->delete($id);
-            if(is_null($article)) {
-                throw new ModelNotFoundException(__('api.not_exist',
-                ['id' => $id, 'attribute' => __('validation.attributes.article')]));
+            if (is_null($article)) {
+                throw new ModelNotFoundException(__(
+                    'api.not_exist',
+                    ['id' => $id, 'attribute' => __('validation.attributes.article')]
+                ));
             }
 
             return ['article' => $article];
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
             return ['status' => HandleException::decideStatus($e), 'article' => null];
         }
@@ -122,13 +131,15 @@ class ArticleService {
     {
         try {
             $article = $this->articleRepo->like($id);
-            if(is_null($article)) {
-                throw new ModelNotFoundException(__('api.not_exist',
-                ['id' => $id, 'attribute' => __('validation.attributes.article')]));
+            if (is_null($article)) {
+                throw new ModelNotFoundException(__(
+                    'api.not_exist',
+                    ['id' => $id, 'attribute' => __('validation.attributes.article')]
+                ));
             }
 
             return ['article' => $article];
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
             return ['status' => HandleException::decideStatus($e), 'article' => null];
         }
