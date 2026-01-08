@@ -27,8 +27,9 @@ class RelationalSeeder extends Seeder
 
         // ユーザとその記事を作成
         User::factory()->count(2)
-        ->has(Article::factory()->count(2)
-            ->state(function(array $attributes, User $user) {
+        ->has(
+            Article::factory()->count(2)
+            ->state(function (array $attributes, User $user) {
                 return[
                     'user_id' => $user->id,
                     'username' => $user->name,
@@ -44,7 +45,7 @@ class RelationalSeeder extends Seeder
 
         // 記事のコメントを作成
         Comment::factory()->count(10)
-        ->state(function() use($articleIds, $userIds){
+        ->state(function () use ($articleIds, $userIds) {
             return[
                 'article_id' => $articleIds->random(),
                 'user_id' => $userIds->random(),

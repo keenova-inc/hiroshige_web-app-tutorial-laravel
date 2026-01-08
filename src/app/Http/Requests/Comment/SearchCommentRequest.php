@@ -1,11 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Requests\Comment;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\FindRecord;
 use App\Models\Article;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 use App\Rules\Page;
 use Illuminate\Contracts\Validation\Validator;
@@ -28,8 +29,8 @@ class SearchCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'page' => [new Page],
-            'id' => [new FindRecord(new Article, trans('validation.attributes.article'))],
+            'page' => [new Page()],
+            'id' => [new FindRecord(new Article(), trans('validation.attributes.article'))],
         ];
     }
 
@@ -40,13 +41,17 @@ class SearchCommentRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-        if($validator->errors()->has('page')) {
-            abort(Response::HTTP_BAD_REQUEST,
-            $validator->errors()->get('page')[0]);
+        if ($validator->errors()->has('page')) {
+            abort(
+                Response::HTTP_BAD_REQUEST,
+                $validator->errors()->get('page')[0]
+            );
 
-        } elseif($validator->errors()->has('id')) {
-            abort(Response::HTTP_NOT_FOUND,
-            $validator->errors()->get('id')[0]);
+        } elseif ($validator->errors()->has('id')) {
+            abort(
+                Response::HTTP_NOT_FOUND,
+                $validator->errors()->get('id')[0]
+            );
         }
     }
 

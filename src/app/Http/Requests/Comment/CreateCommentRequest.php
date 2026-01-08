@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Requests\Comment;
 
@@ -28,7 +30,7 @@ class CreateCommentRequest extends FormRequest
     {
         return [
             'message' => ['required', new CommentMessage()],
-            'id' => [new FindRecord(new Article, trans('validation.attributes.article'))],
+            'id' => [new FindRecord(new Article(), trans('validation.attributes.article'))],
         ];
     }
 
@@ -39,9 +41,11 @@ class CreateCommentRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-        if($validator->errors()->has('id')) {
-            abort(Response::HTTP_NOT_FOUND,
-            $validator->errors()->get('id')[0]);
+        if ($validator->errors()->has('id')) {
+            abort(
+                Response::HTTP_NOT_FOUND,
+                $validator->errors()->get('id')[0]
+            );
         }
     }
 

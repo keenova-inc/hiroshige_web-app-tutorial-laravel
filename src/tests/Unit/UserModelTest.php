@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-it('User Modelのインスタンス化時に機密情報が隠蔽されている', function() {
+it('User Modelのインスタンス化時に機密情報が隠蔽されている', function () {
     $user = new User([
         'name' => '山田花子',
         'email' => 'hanako@example.com',

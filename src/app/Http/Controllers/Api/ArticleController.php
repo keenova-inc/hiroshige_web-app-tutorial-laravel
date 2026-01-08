@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
@@ -15,8 +17,7 @@ class ArticleController extends Controller
 
     public function __construct(
         ArticleService $articleService
-    )
-    {
+    ) {
         $this->articleSvc = $articleService;
     }
 
@@ -50,18 +51,20 @@ class ArticleController extends Controller
         $data = $this->articleSvc->show($id);
         $article = $data['article'];
         $status = $data['status'] ?? Response::HTTP_OK;
-        $message = trans('api.not_exist',
-            ['id' => $id, 'attribute' => __('validation.attributes.article')]);
+        $message = trans(
+            'api.not_exist',
+            ['id' => $id, 'attribute' => __('validation.attributes.article')]
+        );
         $resArray = is_null($article) ? compact('message') : compact('article');
 
         return response()->json($resArray, $status);
     }
 
-     /**
-     * 記事作成
-     * @param CreateArticleRequest $request
-     * @return JsonResponse
-     */
+    /**
+    * 記事作成
+    * @param CreateArticleRequest $request
+    * @return JsonResponse
+    */
     public function create(CreateArticleRequest $request): JsonResponse
     {
         // \Log::debug(print_r($request->validated(), true));
@@ -96,7 +99,7 @@ class ArticleController extends Controller
         $data = $this->articleSvc->update($request->validated());
         $article = $data['article'];
         $status = $data['status'] ?? Response::HTTP_OK;
-        $message = is_null($article) ? __('api.update.fail', ['id' => $id]) :  __('api.update.success', ['id' => $id]);
+        $message = is_null($article) ? __('api.update.fail', ['id' => $id]) : __('api.update.success', ['id' => $id]);
         $resArray = is_null($article) ? compact('message') : compact('article', 'message');
 
         return response()->json($resArray, $status);
@@ -132,7 +135,7 @@ class ArticleController extends Controller
         $data = $this->articleSvc->like($id);
         $article = $data['article'];
         $status = $data['status'] ?? Response::HTTP_OK;
-        $message = is_null($article) ? __('api.update.fail', ['id' => $id]) :  __('api.update.success', ['id' => $id]);
+        $message = is_null($article) ? __('api.update.fail', ['id' => $id]) : __('api.update.success', ['id' => $id]);
 
         return response()->json(compact('message', 'article'), $status);
     }

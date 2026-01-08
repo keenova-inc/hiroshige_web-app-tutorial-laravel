@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
@@ -16,8 +18,7 @@ class CommentController extends Controller
 
     public function __construct(
         CommentService $commentService
-    )
-    {
+    ) {
         $this->commentSvc = $commentService;
     }
 
@@ -53,8 +54,10 @@ class CommentController extends Controller
         $comment = $data['comment'];
         $status = $data['status'] ?? Response::HTTP_OK;
         $attribute = __('validation.attributes.message');
-        $message = is_null($comment) ? __('api.not_exist',
-        ['id' => $validatedData['comment_id'], 'attribute' => $attribute]) : '';
+        $message = is_null($comment) ? __(
+            'api.not_exist',
+            ['id' => $validatedData['comment_id'], 'attribute' => $attribute]
+        ) : '';
         $resArray = is_null($comment) ? compact('message') : compact('comment');
 
         return response()->json($resArray, $status);
@@ -93,7 +96,7 @@ class CommentController extends Controller
         $data = $this->commentSvc->update($request->validated());
         $comment = $data['comment'];
         $status = $data['status'] ?? Response::HTTP_OK;
-        $message = is_null($comment) ?  __('api.update.fail', ['id' => $commentId])
+        $message = is_null($comment) ? __('api.update.fail', ['id' => $commentId])
         : __('api.update.success', ['id' => $commentId]);
         $resArray = is_null($comment) ? compact('message') : compact('comment', 'message');
 

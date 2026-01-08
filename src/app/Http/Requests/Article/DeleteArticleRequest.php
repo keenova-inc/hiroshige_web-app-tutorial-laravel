@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Requests\Article;
 
@@ -15,9 +17,11 @@ class DeleteArticleRequest extends FormRequest
     {
         $articleId = $this->id;
         $article = Article::find($articleId);
-        if(is_null($article)) {
-            abort(Response::HTTP_NOT_FOUND, trans('api.not_exist',
-            ['id' => $articleId, 'attribute' => __('validation.attributes.article')]));
+        if (is_null($article)) {
+            abort(Response::HTTP_NOT_FOUND, trans(
+                'api.not_exist',
+                ['id' => $articleId, 'attribute' => __('validation.attributes.article')]
+            ));
         }
 
         return $this->user()->id === $article->user_id;
@@ -42,7 +46,9 @@ class DeleteArticleRequest extends FormRequest
 
     protected function failedAuthorization()
     {
-        abort(Response::HTTP_FORBIDDEN,
-        trans('api.not_authorized', ['id' => $this->route('id')]));
+        abort(
+            Response::HTTP_FORBIDDEN,
+            trans('api.not_authorized', ['id' => $this->route('id')])
+        );
     }
 }

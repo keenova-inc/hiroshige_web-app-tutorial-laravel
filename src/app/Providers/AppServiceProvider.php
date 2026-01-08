@@ -6,6 +6,7 @@ use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -15,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $interfaces = glob(app_path('Repositories') . '/*/*Interface.php');
 
-        foreach($interfaces as $interface) {
+        foreach ($interfaces as $interface) {
             $filePath = explode('app/', $interface)[1];
             $interfaceFqcn = "App\\" . str_replace(['/', '.php'], ['\\', ''], $filePath);
             $repositoryFqcn = str_replace('Interface', '', $interfaceFqcn);

@@ -1,8 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Repositories\User;
+
 use App\Models\User;
 
-interface UserRepositoryInterface {
+interface UserRepositoryInterface
+{
     public function create(array $data): User;
 }

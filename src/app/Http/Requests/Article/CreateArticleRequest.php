@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Requests\Article;
 
@@ -23,7 +25,7 @@ class CreateArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', new ArticleTitle],
+            'title' => ['required', new ArticleTitle()],
             'content' => ['required'],
         ];
     }
