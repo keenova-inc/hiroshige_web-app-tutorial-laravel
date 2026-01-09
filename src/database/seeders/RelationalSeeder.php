@@ -14,9 +14,9 @@ class RelationalSeeder extends Seeder
      */
     public function run(): void
     {
-        Comment::truncate();
-        Article::truncate();
-        User::truncate();
+        Comment::query()->delete();
+        Article::query()->delete();
+        User::query()->delete();
 
         // テストユーザ作成
         User::create([

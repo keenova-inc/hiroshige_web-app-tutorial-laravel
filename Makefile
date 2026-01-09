@@ -1,9 +1,8 @@
-# 変数定義
-APP_SERVER := laravel-app-server
-
 # docker-compose基本コマンド
 build:
 	docker compose build
+build-no-cache:
+	docker compose build --no-cache
 up:
 	docker compose up -d
 stop:
@@ -22,8 +21,12 @@ restart:
 
 # コンテナログイン
 app:
-	docker compose exec $(APP_SERVER) sh
-
-# Laravel開発サーバ起動
-serve:
-	docker compose exec -d $(APP_SERVER) php artisan serve --host 0.0.0.0 --port 8000
+	docker compose exec app sh
+web:
+	docker compose exec web sh
+db:
+	docker compose exec db sh
+redis:
+	docker compose exec redis bash
+front:
+	docker compose exec front bash

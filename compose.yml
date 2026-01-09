@@ -1,11 +1,39 @@
 services:
-
-  # Appサーバ
-  laravel-app-server:
-    build: ./docker-config/php
-    container_name: laravel-app-server
-    ports:
-      - '8000:8000'
+  app:
+    build: ./docker/php
     volumes:
-      - ./src:/var/www/html
-      - ./docker-config/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./src:/work
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+  
+  web:
+    image: nginx:1.29.4-alpine
+    ports:
+      - 8000:80
+    volumes:
+      - ./src:/work
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    working_dir: /data
+
+  db:
+    build: ./docker/db
+    volumes:
+      - db-store:/var/lib/mysql
+    ports:
+      - 3306:3306
+    env_file:
+      - ./docker/db/.env.example
+  
+  redis:
+    image: redis:8.4
+    ports:
+      - 6379:6379
+
+  front:
+    build: ./docker/front
+    ports:
+      - 80:80
+    env_file:
+      - ./docker/front/.env.example
+
+volumes:
+  db-store:
