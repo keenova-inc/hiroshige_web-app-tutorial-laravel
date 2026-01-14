@@ -1,6 +1,7 @@
 services:
   app:
-    build: ./docker/php
+    build:
+      dockerfile: ./docker/php/Dockerfile
     volumes:
       - ./src:/work
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
@@ -29,13 +30,15 @@ services:
       - 6379:6379
 
   front:
-    build: ./docker/front
+    build:
+      dockerfile: ./docker/front/Dockerfile
     ports:
       - 3000:3000
-    env_file:
-      - ./docker/front/.env.example
     volumes:
       - ./front:/work
+      - front_node_modules:/work/node_modules
+    env_file: ./front/.env.example
 
 volumes:
   db-store:
+  front_node_modules:
