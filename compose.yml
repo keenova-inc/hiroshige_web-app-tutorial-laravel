@@ -31,9 +31,11 @@ services:
   front:
     build: ./docker/front
     ports:
-      - 80:80
+      - 3000:3000
     env_file:
       - ./docker/front/.env.example
+    volumes:
+      - ./front:/work
 
 volumes:
   db-store:

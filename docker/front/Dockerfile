@@ -1,5 +1,9 @@
 From node:24-bullseye
 
-WORKDIR /app
+RUN apt update && apt install -y \
+#ssコマンド使用のため
+iproute2
 
-CMD ["tail", "-f", "/dev/null"]
+WORKDIR /work
+
+CMD ["npm", "run", "dev"]
