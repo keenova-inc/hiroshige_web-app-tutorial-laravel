@@ -44,6 +44,17 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
+  /* カスタム設定 */
+  --color-header: var(--header);
+  --color-ok: var(--ok);
+  --color-ok-hover: var(--ok-hover);
+  --color-back: var(--back);
+  --color-back-hover: var(--back-hover);
+  --color-delete: var(--delete);
+  --color-loading: var(--loading);
+
+  /* TOOD: 設定--font-title:  */
 }
 
 :root {
@@ -79,9 +90,19 @@
   --sidebar-accent-foreground: oklch(0.216 0.006 56.043);
   --sidebar-border: oklch(0.923 0.003 48.717);
   --sidebar-ring: oklch(0.709 0.01 56.259);
+
+  /* カスタム設定 */
+  --header: oklch(0.91 0.03 55);
+  --ok: oklch(49.774% 0.09701 145.525);
+  --ok-hover: oklch(60.2% 0.09701 145.525);
+  --back: oklch(39.631% 0.09452 25.743);
+  --back-hover: oklch(50.057% 0.09452 25.743);
+  --delete: oklch(33.745% 0.02016 269.543);
+  --loading: oklch(69.25% 0.06224 344.865);
 }
 
-.dark {
+/* ダークモード時 */
+/* .dark {
   --background: oklch(0.147 0.004 49.25);
   --foreground: oklch(0.985 0.001 106.423);
   --card: oklch(0.216 0.006 56.043);
@@ -113,7 +134,7 @@
   --sidebar-accent-foreground: oklch(0.985 0.001 106.423);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.553 0.013 58.071);
-}
+} */
 
 @layer base {
   * {
@@ -121,5 +142,15 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  button:not(:disabled),
+  [role="button"] {
+    cursor: pointer;
+  }
+}
+
+@layer utilities {
+  .animate-spin {
+    animation: spin 1s linear infinite;
   }
 }

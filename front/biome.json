@@ -13,7 +13,7 @@
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2,
-    "lineWidth": 120
+    "lineWidth": 100
   },
   "linter": {
     "enabled": true,
@@ -43,6 +43,14 @@
       "quoteProperties": "asNeeded",
       "bracketSpacing": true,
       "bracketSameLine": false
+    }
+  },
+  "css": {
+    "formatter": {
+      "enabled": true
+    },
+    "parser": {
+      "tailwindDirectives": true
     }
   }
 }
