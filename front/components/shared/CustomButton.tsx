@@ -1,24 +1,20 @@
 'use client';
-
 import { Button } from '../ui/button';
+
+const variantClass = {
+  ok: 'bg-ok hover:bg-ok-hover',
+  back: 'bg-back hover:bg-back-hover',
+};
 
 type Props = {
   children: React.ReactNode;
   type?: 'button' | 'submit';
-  className?: string;
+  variant?: keyof typeof variantClass;
 };
 
-export function OkButton({ children, type = 'submit' }: Props) {
+export default function CustomButton({ children, type = 'submit', variant = 'ok' }: Props) {
   return (
-    <Button type={type} className="bg-ok hover:bg-ok-hover">
-      {children}
-    </Button>
-  );
-}
-
-export function BackButton({ children, type = 'submit' }: Props) {
-  return (
-    <Button type={type} className="bg-back hover:bg-back-hover">
+    <Button type={type} className={variantClass[variant]}>
       {children}
     </Button>
   );

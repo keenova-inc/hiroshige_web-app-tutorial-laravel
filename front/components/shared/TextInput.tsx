@@ -19,9 +19,6 @@ type InputProps = {
 const TextInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const { label, id, errors, ...inputAttributes } = props;
 
-  if (errors) {
-    console.log(errors);
-  }
   return (
     <Field>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>

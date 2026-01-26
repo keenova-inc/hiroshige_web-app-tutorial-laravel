@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { OkButton } from '@/components/shared/CustomButton';
+import CustomButton from '@/components/shared/CustomButton';
 import TextInput from '@/components/shared/TextInput';
 // import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -21,6 +21,7 @@ import { createUser } from '../actions';
 import { type CreateUserSchema, createUserSchema } from '../schemas';
 
 export function SignupForm({ className, ...props }: React.ComponentProps<'div'>) {
+  const router = useRouter();
   const { setLoading } = useLoading();
 
   // バリデーション
@@ -36,8 +37,6 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
     password: '',
     password_confirmation: '',
   });
-
-  const router = useRouter();
 
   async function onSubmit(formDatas: CreateUserSchema) {
     setLoading(true);
@@ -108,7 +107,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                 {...register('password_confirmation')}
               />
               <Field>
-                <OkButton type="submit">登録</OkButton>
+                <CustomButton type="submit">登録</CustomButton>
                 <Separator />
                 <FieldDescription className="text-center">
                   アカウント登録済の方はこちら <Link href="/login">ログイン</Link>

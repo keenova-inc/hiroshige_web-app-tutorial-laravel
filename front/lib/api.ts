@@ -1,7 +1,5 @@
-// import { cookies } from 'next/headers';
+import { cookies } from 'next/headers';
 import 'server-only';
-
-// import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 
 // Laravelへのfetch共通化
 type Props = {
@@ -14,24 +12,29 @@ type Props = {
   datas?: {
     [key: string]: any;
   };
+  hasPrefix?: boolean;
 };
 
-export async function apiFetch({ url, options, datas }: Props) {
+export async function apiFetch({ url, options, datas, hasPrefix = true }: Props) {
   // TODO: Cookieの設定
-  // const cookies: Promise<ReadonlyRequestCookies> = await cookies();
+  const cookieStore = await cookies();
+
   const headers = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
-    // Cookie: cookies.toString(),
+    Cookie: cookieStore.toString(),
   };
 
   // TODO: 全てのメソッドをこれで吸収できるか？
-  return await fetch(`${process.env.API_BASE_URL}${url}`, {
+  const baseUrl = hasPrefix ? process.env.API_BASE_URL : process.env.BASE_URL;
+  return await fetch(`${baseUrl}${url}`, {
+    credentials: 'include',
     ...options,
     headers: {
       ...headers,
       ...options.headers,
     },
+    cache: 'no-cache',
     body: JSON.stringify(datas),
   });
 }

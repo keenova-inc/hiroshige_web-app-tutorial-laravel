@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import CustomButton from '@/components/shared/CustomButton';
 import TextInput from '@/components/shared/TextInput';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Field, FieldDescription, FieldGroup } from '@/components/ui/field';
 import { Separator } from '@/components/ui/separator';
@@ -17,6 +17,7 @@ import { login } from '../actions';
 import { type LoginSchema, loginSchema } from '../schemas';
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
+  const router = useRouter();
   const { setLoading } = useLoading();
 
   // バリデーション
@@ -35,15 +36,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
     setLoading(true);
     clearErrors();
 
-    // TODO:
     try {
       const res = await login(formDatas);
-      // console.log('******** submitted ********');
-      // console.log('res: ', res);
 
-      if (res.status === 201) {
+      if (res.status === 200) {
         toast.success(res.response.message);
-        router.push('/login');
+        router.push('/mypage');
       } else if (res.status === 422) {
         const validationErrors = res.response.errors;
         Object.keys(validationErrors).forEach((fieldName) => {
@@ -84,11 +82,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                 autoComplete="off"
                 {...register('password')}
               />
-
               <Field>
-                <Button type="submit" className="bg-ok hover:bg-ok-hover">
-                  ログイン
-                </Button>
+                <CustomButton type="submit">ログイン</CustomButton>
                 <Separator />
                 <FieldDescription className="text-center">
                   アカウント登録前の方はこちら <Link href="/users/create">ユーザ登録</Link>
