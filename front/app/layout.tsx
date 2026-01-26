@@ -40,13 +40,20 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   // const authUser = await getAuthUser();
+  // const authUser = {
+  //   id: 2,
+  //   name: 'piyo',
+  //   email: 'piyo',
+  //   email_verified_at: '1111',
+  // };
+  const authUser = undefined;
   return (
     <html lang="ja">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <div className="flex flex-col items-center mt-2 gap-4">
           <LoadingProvider>
             {/* <AuthProvider authUser> */}
-            <Navigation /* authUser={authUser}*/ />
+            <Navigation authUser={authUser} />
             {children}
             {/* </AuthProvider> */}
           </LoadingProvider>

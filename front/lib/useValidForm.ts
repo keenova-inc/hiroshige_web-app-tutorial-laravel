@@ -2,7 +2,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type DefaultValues, type UseFormReturn, useForm } from 'react-hook-form';
 import type { ZodType, z } from 'zod';
 
-// T の制約を ZodTypeAny または ZodType に変更します
+// TODO: サプレッションコメントを許可するかどうか検討
+// biome-ignore lint/suspicious/noExplicitAny: 型定義が動的なため許可
 export function useValidForm<T extends ZodType<any, any, any>>(
   schema: T,
   defaultValues: DefaultValues<z.infer<T>>,
