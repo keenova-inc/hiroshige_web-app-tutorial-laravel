@@ -13,10 +13,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         return "Hello!";
     });
     Route::get('/login-check', function (Request $request) {
-        return [
-            'user' => $request->user(),
-            'auth' => Auth::user(),
-        ];
+        return $request->user();
     });
 
     Route::prefix('/articles')->group(function () {

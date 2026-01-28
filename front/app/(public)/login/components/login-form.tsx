@@ -41,7 +41,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 
       if (res.status === 200) {
         toast.success(res.response.message);
-        router.push('/mypage');
+        router.push('/auth/mypage');
       } else if (res.status === 422) {
         const validationErrors = res.response.errors;
         Object.keys(validationErrors).forEach((fieldName) => {

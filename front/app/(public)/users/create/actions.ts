@@ -4,7 +4,6 @@ import { apiFetch } from '@/lib/api';
 import type { CreateUserSchema } from './schemas';
 
 export async function createUser(formData: CreateUserSchema) {
-  console.log('******* createUser ******');
   const datas = {
     name: formData.name,
     email: formData.email,

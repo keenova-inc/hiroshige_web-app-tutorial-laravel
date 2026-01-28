@@ -7,48 +7,46 @@ import { apiFetch } from '@/lib/api';
 import type { LoginSchema } from './schemas';
 
 async function setCookie(setCookies: string[]) {
-  let xXsrfToken: string | undefined;
-  const cookieStore = await cookies();
-  const parsedSetCookies: Cookie[] = parse(setCookies);
+  // 認証用の2つのCookieを取得
+  const parsedSetCookies = parse(setCookies);
+  const xsrfTokenCookie = parsedSetCookies.find((pc) => pc.name === 'XSRF-TOKEN');
+  const regex = /laravel*/;
+  const sessionCookie = parsedSetCookies.find((pc) => regex.test(pc.name) === true);
+  if (!xsrfTokenCookie || !sessionCookie) {
+    return;
+  }
 
-  parsedSetCookies.forEach((co: Cookie) => {
-    if (co.name === 'XSRF-TOKEN' || co.name.startsWith('laravel')) {
-      cookieStore.set(co.name, co.value, {
-        expires: co.expires ? new Date(co.expires) : undefined,
-        maxAge: co.maxAge,
-        path: co.path,
-        httpOnly: co.httpOnly ?? false,
-        secure: co.secure ?? false,
-        sameSite: (co.sameSite?.toLowerCase() as 'lax' | 'strict' | 'none') || 'lax',
-      });
-      // Requestヘッダー用にdecode
-      if (co.name === 'XSRF-TOKEN') {
-        xXsrfToken = decodeURI(co.value);
-      }
-    }
+  // Cookieをセット
+  const cookieStore = await cookies();
+  [xsrfTokenCookie, sessionCookie].forEach((co: Cookie) => {
+    cookieStore.set(co.name, co.value, {
+      expires: co.expires ? new Date(co.expires) : undefined,
+      maxAge: co.maxAge,
+      path: co.path,
+      httpOnly: co.httpOnly ?? false,
+      secure: co.secure ?? false,
+      sameSite: (co.sameSite?.toLowerCase() as 'lax' | 'strict' | 'none') || 'lax',
+    });
   });
 
-  return xXsrfToken;
+  // X-XSRF-TOKENヘッダセット用のCSRFTokenを返却
+  return decodeURI(xsrfTokenCookie.value);
 }
 
 export async function login(formData: LoginSchema) {
-  const Origin = process.env.ORIGIN || 'http://localhost:3000';
   try {
     const res = await apiFetch({
       url: '/sanctum/csrf-cookie',
       options: {
         method: 'GET',
-        headers: {
-          Origin,
-        },
       },
-
       hasPrefix: false,
     });
 
     if (res.status === 204) {
       const headerSetCookies = res.headers.getSetCookie();
       const decodedToken = await setCookie(headerSetCookies);
+      // console.log('decodedToken: ', decodedToken);
 
       if (!decodedToken) {
         throw new Error(messages.serverError);
@@ -60,7 +58,6 @@ export async function login(formData: LoginSchema) {
           method: 'POST',
           headers: {
             'X-XSRF-TOKEN': decodedToken,
-            Origin,
           },
         },
         hasPrefix: false,
@@ -86,7 +83,6 @@ export async function login(formData: LoginSchema) {
     }
   } catch (e) {
     console.error(e);
-
     return {
       status: 500,
       response: { message: messages.networkError },
