@@ -3,5 +3,5 @@ type Props = {
 };
 
 export default function Title({ children }: Props) {
-  return <p className="flex items-center gap-2 text-2xl font-bold">{children}</p>;
+  return <p className="flex items-center gap-2 text-3xl font-bold">{children}</p>;
 }

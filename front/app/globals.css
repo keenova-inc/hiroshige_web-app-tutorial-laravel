@@ -53,6 +53,7 @@
   --color-back-hover: var(--back-hover);
   --color-delete: var(--delete);
   --color-loading: var(--loading);
+  --color-table-header: var(--table-header);
 
   /* TOOD: 設定--font-title:  */
 }
@@ -99,6 +100,7 @@
   --back-hover: oklch(50.057% 0.09452 25.743);
   --delete: oklch(33.745% 0.02016 269.543);
   --loading: oklch(69.25% 0.06224 344.865);
+  --table-header: oklch(88.282% 0.03028 20.104);
 }
 
 /* ダークモード時 */

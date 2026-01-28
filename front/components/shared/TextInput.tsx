@@ -11,6 +11,7 @@ type InputProps = {
   placeholder?: string;
   required?: boolean;
   errors?: FieldError;
+  className?: string;
   autoComplete?: 'on' | 'off';
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
@@ -20,10 +21,16 @@ const TextInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const { label, id, errors, ...inputAttributes } = props;
 
   return (
-    <Field>
+    <Field data-invalid={errors !== undefined}>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <div>
-        <Input id={id} {...inputAttributes} ref={ref} className={errors && 'border-destructive'} />
+        <Input
+          id={id}
+          name={id}
+          {...inputAttributes}
+          ref={ref}
+          aria-invalid={errors !== undefined}
+        />
 
         {errors?.types &&
           Object.values(errors.types).map((errMsg, _) => (

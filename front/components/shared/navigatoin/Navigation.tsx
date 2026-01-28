@@ -1,6 +1,6 @@
-'use client';
+'use server';
 
-// import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from 'lucide-react';
+import { headers } from 'next/headers';
 import Link from 'next/link';
 import {
   NavigationMenu,
@@ -12,23 +12,24 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import type { User } from '@/features/users/types/user';
+import LogoutLink from './LogoutLink';
 
-type Props = {
-  authUser?: User;
-};
-
-export function Navigation({ authUser }: Props) {
+export async function Navigation() {
   //   const isMobile = useIsMobile();
-  const viewport = false; // スマフォサイズの時はtrueにしないと描画崩れ
+  const viewport = false; // TODO: スマフォサイズの時はtrueにしないと描画崩れ
 
-  console.log(authUser);
+  const headerInfo = await headers();
+  const authUserString = headerInfo.get('authUser');
+  const authUser: User | undefined = authUserString
+    ? JSON.parse(decodeURIComponent(authUserString))
+    : undefined;
 
   return (
     <NavigationMenu viewport={viewport} className="bg-header">
       <NavigationMenuList className="flex w-full justify-between lg:w-[700px] md:w-[500px] min-w-100 p-1">
         <NavigationMenuItem>
           <NavigationMenuLink asChild className={(navigationMenuTriggerStyle(), 'bg-header')}>
-            <Link href="/" className="text-xl font-bold">
+            <Link href="/articles" className="text-xl font-bold">
               記事サイト
             </Link>
           </NavigationMenuLink>
@@ -36,15 +37,15 @@ export function Navigation({ authUser }: Props) {
 
         {authUser ? (
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="bg-header">ユーザ名</NavigationMenuTrigger>
+            <NavigationMenuTrigger className="bg-header">{authUser.name}</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid w-[200px] gap-4">
                 <li>
                   <NavigationMenuLink asChild>
-                    <Link href="#">マイページ</Link>
+                    <Link href="/auth/mypage">マイページ</Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
-                    <Link href="#">ログアウト</Link>
+                    <LogoutLink />
                   </NavigationMenuLink>
                 </li>
               </ul>

@@ -37,7 +37,7 @@ services:
     volumes:
       - ./front:/work
       # - front_node_modules:/work/node_modules
-    env_file: ./front/.env.example
+    env_file: ./front/.env.development # TODO: 指定しなくてもNODE_ENVにより識別できるはず
 
 volumes:
   db-store:
